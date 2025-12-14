@@ -2,18 +2,20 @@ import * as React from "react"
 import { SVGProps } from "react"
 
 export interface ToggleProps extends SVGProps<SVGSVGElement>{
-    color: string
+    primaryColor: string;
+    secondaryColor: string;
 }
 
-const Toggle = ({color, ...props}: ToggleProps) => (
+const Toggle = ({primaryColor, secondaryColor, ...props}: ToggleProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 40 20"
     fill="none"
-    className={color}
+    className={primaryColor}
     {...props}
   >
-    <rect width={40} height={20} fill={color} rx={10} />
+    <rect width={40} height={20} fill={secondaryColor} rx={10} />
+    <circle cx={10} cy={10} r={7} fill={primaryColor} />
   </svg>
 )
 export default Toggle

@@ -65,7 +65,7 @@ const BoardSection = ({
                   {board.icon}
                 </span>
 
-                <span className="font-semibold text-[15px] whitespace-nowrap overflow-hidden text-ellipsis">{board.name}</span>
+                <span className="font-semibold text-[15px] whitespace-nowrap font-bold overflow-hidden text-ellipsis">{board.name}</span>
               </div>
             </div>
           );

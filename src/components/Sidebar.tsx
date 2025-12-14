@@ -37,14 +37,20 @@ const Sidebar = ({boards, currentBoardId, onHideSidebar, onCreateBoard, onSelect
             </h4>
         </div>
       </div>
-      <div className='flex flex-col gap-4'>
-        <div className='flex items-center gap-2 cursor-pointer bg-[#E4EBFA] px-2 py-4'>
+      <div className='flex flex-col gap-[14px] items-centre'>
+        <div className='flex items-center justify-between cursor-pointer py-[8px] px-[44px] bg-[#F4F7FD] rounded-[6px]'>
+          <div className='w-[19px] h-[19px]'>
             <Sun color='#828FA3' />
-            <Toggle color='#635FC7'/>
+          </div>
+          <div className='w-[40px] h-[20px]'>
+            <Toggle primaryColor='#fff' secondaryColor='#635FC7'/>
+          </div>
+          <div className='w-[19px] h-[19px]'>
             <Moon color='#828FA3' />
+          </div> 
         </div>
-        <div className='flex items-center cursor-pointer gap-2 text-[#828FA3]' onClick={onHideSidebar}>
-          <Hide color='#828FA3' /> <span>Hide Sidebar</span>
+        <div className='flex items-center cursor-pointer gap-[6px] text-[#828FA3] px-[26px]' onClick={onHideSidebar}>
+          <Hide color='#828FA3'  width={18} height={16}/> <h4>Hide Sidebar</h4>
         </div>
       </div>
     </div>
