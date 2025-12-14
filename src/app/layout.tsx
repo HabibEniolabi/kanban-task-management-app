@@ -19,11 +19,11 @@ const jakarta = Plus_Jakarta_Sans({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={jakarta.className}>
+    <html lang="en" className={jakarta.variable}>
       <head>
         <ColorSchemeScript defaultColorScheme="auto"/>
       </head>
-      <body>
+      <body className={jakarta.className}>
         <MantineProvider>
           <ModalsProvider>
             <Providers>

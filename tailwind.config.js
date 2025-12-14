@@ -7,7 +7,7 @@ const tailwindConfig = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'sans-serif'], // now default `font-sans` uses it
+        sans: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'sans-serif'],
       },
     },
   },

@@ -22,13 +22,13 @@ const BoardSection = ({
   onSelect,
 }: BoardSectionProps) => {
   return (
-    <div className="flex flex-col gap-[5px] pr-[15px]">
-      <div className="flex items-center gap-[5px] px-[24px]">
-        <h4 className="text-sm font-bold text-[#828FA3] uppercase tracking-[2.4px]">
+    <div className="flex flex-col gap-[5px]">
+      <div className="flex items-center gap-[5px] whitespace-nowrap">
+        <h4 className="text-sm font-bold text-[#828FA3] uppercase tracking-[2.4px] whitespace-nowrap">
           {title}
         </h4>
         {count !== undefined && (
-          <span className="text-xs font-bold text-[#828FA3]">({count})</span>
+          <span className="text-xs font-bold text-[#828FA3] whitespace-nowrap">({count})</span>
         )}
       </div>
       <div className="flex flex-col">
@@ -44,11 +44,12 @@ const BoardSection = ({
                 cursor-pointer
                 transition-all duration-200
                 rounded-r-full
-                 py-[8px] px-[24px]
+                py-[8px]
+                -ml-[33px]
                 ${
                   isActive
-                    ? "bg-[#635FC7] text-[#FFFFFF]"
-                    : "text-[#828FA3] hover:bg-[#EFEFF9] hover:text-[#635FC7]"
+                    ? "bg-[#635FC7] text-[#FFFFFF] border-l-4 border-l-[#635FC7] pl-[29px] pr-[24px]"
+                    : "text-[#828FA3] hover:bg-[#EFEFF9] hover:text-[#635FC7] pl-[33px] pr-[24px]"
                 }
               `}
             >
@@ -57,13 +58,14 @@ const BoardSection = ({
                   gap-[12px]
                   flex items-center
                   py-[3px]
+                  whitespace-nowrap
                 "
               >
-                <span className="w-[16px] h-[16px] flex items-center justify-center">
+                <span className="w-[16px] h-[16px] flex items-center justify-center flex-shrink-0">
                   {board.icon}
                 </span>
 
-                <span className="font-semibold text-[15px]">{board.name}</span>
+                <span className="font-semibold text-[15px] whitespace-nowrap overflow-hidden text-ellipsis">{board.name}</span>
               </div>
             </div>
           );
