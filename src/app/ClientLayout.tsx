@@ -1,4 +1,3 @@
-// app/ClientLayout.tsx (Client Component)
 'use client'
 import { useCallback, useState } from "react";
 import Sidebar from "../components/Sidebar";
@@ -48,24 +47,26 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   }, []);
 
   return (
-    <div className="flex min-h-screen">
-      {isSidebarVisible && (
-        <Sidebar 
-          boards={allBoards}
-          currentBoardId={currentBoardId}
-          onSelectBoard={handleSelectBoard}
-          onHideSidebar={handleHideSidebar} 
-          onCreateBoard={handleCreateBoard}             
-        />
-      )}
-      <div className="flex flex-col">
+    <div className="flex flex-col min-h-screen">
+      <div className="flex w-full">
         <Header 
           currentBoard={allBoards.find(b => b.id === currentBoardId)}
           onAddTask={handleAddTask} 
           onOpenBoardMenu={handleOpenBoardMenu}               
         />
-        <main>{children}</main>
       </div>
+        <div className="flex flex-1">
+          {isSidebarVisible && (
+            <Sidebar 
+              boards={allBoards}
+              currentBoardId={currentBoardId}
+              onSelectBoard={handleSelectBoard}
+              onHideSidebar={handleHideSidebar} 
+              onCreateBoard={handleCreateBoard}             
+            />
+          )}
+           <main className="w-full">{children}</main>
+        </div>
     </div>
   );
 }

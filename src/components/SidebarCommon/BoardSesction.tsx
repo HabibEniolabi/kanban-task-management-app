@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface Board {
   id: string;
@@ -19,31 +19,56 @@ const BoardSection = ({
   count,
   boards,
   currentBoardId,
-  onSelect
+  onSelect,
 }: BoardSectionProps) => {
   return (
-    <div className='flex flex-col gap-4'>
-      <div className='flex items-center justify-between px-4'>
-        <h2 className='text-sm font-semibold text-[#828FA3]'>{title}</h2>
+    <div className="flex flex-col gap-[5px] pr-[15px]">
+      <div className="flex items-center gap-[5px] px-[24px]">
+        <h4 className="text-sm font-bold text-[#828FA3] uppercase tracking-[2.4px]">
+          {title}
+        </h4>
         {count !== undefined && (
-          <span className='text-xs font-medium text-[#828FA3]'>{count}</span>
+          <span className="text-xs font-bold text-[#828FA3]">({count})</span>
         )}
       </div>
-      <ul className='flex flex-col gap-1 pr-6'>
-        {boards.map((board) => (
-          <li
-            key={board.id}
-            className={`cursor-pointer rounded-r-full px-3 py-2 items-center flex gap-3 transition-colors duration-200${
-              board.id === currentBoardId
-                ? 'bg-[#635FC7] font-semibold text-white'
-                : 'text-[#828FA3] hover:bg-[#A8A4FF] hover:text-[#635FC7]'
-            }`}
-            onClick={() => onSelect(board.id)}
-          >
-           <span className='w-4 h-4'>{board.icon}</span> <span className='font-semibold'>{board.name}</span>
-          </li>
-        ))}
-      </ul>
+      <div className="flex flex-col">
+        {boards.map((board) => {
+          const isActive = board.id === currentBoardId;
+
+          return (
+            <div
+              key={board.id}
+              onClick={() => onSelect(board.id)}
+              className={`
+                flex flex-col
+                cursor-pointer
+                transition-all duration-200
+                rounded-r-full
+                 py-[8px] px-[24px]
+                ${
+                  isActive
+                    ? "bg-[#635FC7] text-[#FFFFFF]"
+                    : "text-[#828FA3] hover:bg-[#EFEFF9] hover:text-[#635FC7]"
+                }
+              `}
+            >
+              <div
+                className="
+                  gap-[12px]
+                  flex items-center
+                  py-[3px]
+                "
+              >
+                <span className="w-[16px] h-[16px] flex items-center justify-center">
+                  {board.icon}
+                </span>
+
+                <span className="font-semibold text-[15px]">{board.name}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

@@ -16,15 +16,10 @@ export interface SidebarProps {
 
 const Sidebar = ({boards, currentBoardId, onHideSidebar, onCreateBoard, onSelectBoard}:SidebarProps) => {
   return (
-    <div className='flex flex-col justify-between bg-white w-[300px] p-7 shadow-md'>
-      <div className='flex flex-col gap-8'>
-        <div className='flex gao-2 items-centre'>
-            <img src='/logo.svg' alt='Kanban Logo' width={25} height={25}/>
-            <h1 className='text-xl font-bold text-[#000112]'>Kanban</h1>
-        </div>
+    <div className='flex flex-col bg-white w-[300px] border-r border-[#E4EBFA] border-1px-solid h-screen'>
         <div>
             <BoardSection 
-                title='ALL BOARDS' 
+                title='all boards' 
                 boards={boards} 
                 onSelect={onSelectBoard}
                 count={boards.length} 
@@ -32,16 +27,15 @@ const Sidebar = ({boards, currentBoardId, onHideSidebar, onCreateBoard, onSelect
             />
         </div>
         <div className='flex items-centre gap-2 '>
-            <li 
-                className='cursor-pointer rounded-r-full px-6 py-2 flex items-center gap-3 transition-colors duration-200 text-[#635FC7] hover:bg-[#A8A4FF] hover:text-[#635FC7] font-semibold'
+            <h4 
+                className='cursor-pointer px-[24px] flex items-center gap-[10px] text-[#635FC7] font-semibold'
                 onClick={onCreateBoard}
             >
                 {/* <span className='w-4 h-4'>{CreateBoardIcon}</span>  */}
-                <span className='w-4 h-4'><BoardIcon color="#635FC7"/></span> 
+                <BoardIcon color="#635FC7" width={16} height={16} />
                 <span>+ Create New Board</span>
-            </li>
+            </h4>
         </div>
-      </div>
       <div className='flex flex-col gap-4'>
         <div className='flex items-centre gap-2 cursor-pointer bg-[#E4EBFA] px-2 py-4'>
             <Sun color='#828FA3' />
