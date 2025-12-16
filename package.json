@@ -13,11 +13,14 @@
     "@mantine/hooks": "^8.3.10",
     "@mantine/modals": "^8.3.10",
     "@reduxjs/toolkit": "^2.11.1",
+    "add": "^2.0.6",
+    "formik": "^2.4.9",
     "next": "16.0.8",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "react-redux": "^9.2.0",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

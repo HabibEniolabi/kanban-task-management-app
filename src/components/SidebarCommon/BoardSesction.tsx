@@ -4,6 +4,11 @@ export interface Board {
   id: string;
   name: string;
   icon: React.ReactNode;
+  columns?: Array<{
+    id: string;
+    name: string;
+    tasks: unknown[];
+  }>;
 }
 
 export interface BoardSectionProps {
