@@ -17,9 +17,8 @@ export default function ClientLayout({
   const [createBoardModalOpen, setCreateBoardModalOpen] =
     useState<boolean>(false);
 
-    const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [modalBoardData, setModalBoardData] = useState<Board | null>(null);
-
 
   // Load boards from public/data.json on mount
   useEffect(() => {
@@ -100,7 +99,7 @@ export default function ClientLayout({
   }, [allBoards, currentBoardId]);
 
   const handleEditBoardSubmit = useCallback(
-  (name: string, columns: string[] = []) => {
+    (name: string, columns: string[] = []) => {
       setAllBoards((boards) =>
         boards.map((b) =>
           b.id === currentBoardId
@@ -119,8 +118,7 @@ export default function ClientLayout({
       setCreateBoardModalOpen(false);
     },
     [currentBoardId]
-);
-
+  );
 
   const handleDeleteBoard = useCallback(() => {
     console.log("Board deleted");
@@ -129,32 +127,35 @@ export default function ClientLayout({
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex w-full">
-          <Header
-            currentBoard={allBoards.find((b) => b.id === currentBoardId)}
-            onAddTask={handleAddTask}
-            onEditBoard={openEditBoardModal}
-            onDeleteBoard={handleDeleteBoard}
-          />
+        <Header
+          currentBoard={allBoards.find((b) => b.id === currentBoardId)}
+          onAddTask={handleAddTask}
+          onEditBoard={openEditBoardModal}
+          onDeleteBoard={handleDeleteBoard}
+        />
       </div>
       <div className="flex flex-1">
         {isSidebarVisible && (
-            <Sidebar
-              boards={allBoards}
-              currentBoardId={currentBoardId}
-              onSelectBoard={handleSelectBoard}
-              onHideSidebar={handleHideSidebar}
-              onCreateBoard={openCreateBoardModal}
-            />
+          <Sidebar
+            boards={allBoards}
+            currentBoardId={currentBoardId}
+            onSelectBoard={handleSelectBoard}
+            onHideSidebar={handleHideSidebar}
+            onCreateBoard={openCreateBoardModal}
+          />
         )}
         <main className={`w-full`}>{children}</main>
       </div>
       <CreateBoardModal
+        key={`${modalMode}-${currentBoardId}`}
         opened={createBoardModalOpen}
+        title={modalMode === "edit" ? "Edit" : "Add New"}
+        initialName={modalBoardData?.name || ""}
+        initialColumns={modalBoardData?.columns?.map((c) => c.name) || ["", ""]}
+        onSubmit={
+          modalMode === "edit" ? handleEditBoardSubmit : handleCreateBoard
+        }
         onClose={() => setCreateBoardModalOpen(false)}
-        onSubmit={modalMode === "create" ? handleCreateBoard : handleEditBoardSubmit}
-        title={modalMode === "create" ? "Add New" : "Edit"}
-        initialName={modalBoardData?.name}
-        initialColumns={modalBoardData?.columns?.map((c) => c.name) || [""]}
       />
     </div>
   );

@@ -22,13 +22,8 @@ const CreateBoardModal = ({
   initialColumns = ["", ""]
 }: CreateBoardModalProps) => {
   const [name, setName] = useState(() => initialName);
-  const [columns, setColumns] = useState<string[]>(initialColumns);
-
-  useEffect(() => {
-    setName(initialName);
-    setColumns(initialColumns.length > 0 ? initialColumns : ["", ""]);
-  }, [initialName, initialColumns, opened]);
-
+  const [columns, setColumns] = useState<string[]>(() =>
+  initialColumns.length > 0 ? initialColumns : ["", ""]);
 
   const handleDeleteColumn = (index: number) => {
     if (columns.length > 1) {
