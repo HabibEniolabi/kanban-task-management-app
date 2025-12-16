@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import BoardIcon from "../assets/icon/board";
 import { Board } from "../components/SidebarCommon/BoardSesction";
 import CreateBoardModal from "../components/Modals/CreateBoardModal";
+import DeleteBoardModal from "../components/Modals/DeleteBoardModal";
 
 export default function ClientLayout({
   children,
@@ -16,6 +17,7 @@ export default function ClientLayout({
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
   const [createBoardModalOpen, setCreateBoardModalOpen] =
     useState<boolean>(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
 
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [modalBoardData, setModalBoardData] = useState<Board | null>(null);
@@ -120,9 +122,25 @@ export default function ClientLayout({
     [currentBoardId]
   );
 
-  const handleDeleteBoard = useCallback(() => {
-    console.log("Board deleted");
+  const openDeleteBoardModal = useCallback(() => {
+    setDeleteModalOpen(true);
   }, []);
+
+  const handleDeleteBoard = useCallback(() => {
+    setAllBoards((boards) => {
+      const filtered = boards.filter((b) => b.id !== currentBoardId);
+
+      if (filtered.length > 0) {
+        setCurrentBoardId(filtered[0].id);
+      } else {
+        setCurrentBoardId("");
+      }
+
+      return filtered;
+    });
+
+    setDeleteModalOpen(false);
+  }, [currentBoardId]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -131,7 +149,7 @@ export default function ClientLayout({
           currentBoard={allBoards.find((b) => b.id === currentBoardId)}
           onAddTask={handleAddTask}
           onEditBoard={openEditBoardModal}
-          onDeleteBoard={handleDeleteBoard}
+          onDeleteBoard={openDeleteBoardModal}
         />
       </div>
       <div className="flex flex-1">
@@ -156,6 +174,15 @@ export default function ClientLayout({
           modalMode === "edit" ? handleEditBoardSubmit : handleCreateBoard
         }
         onClose={() => setCreateBoardModalOpen(false)}
+      />
+      <DeleteBoardModal
+        opened={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onSubmit={handleDeleteBoard}
+        title={"board"}
+        subTitle={`Are you sure you want to delete the ‘${
+          allBoards.find((b) => b.id === currentBoardId)?.name ?? ""
+        }’ board? This action will remove all columns and tasks and cannot be reversed.`}
       />
     </div>
   );
