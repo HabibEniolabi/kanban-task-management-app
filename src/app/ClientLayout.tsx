@@ -6,6 +6,7 @@ import BoardIcon from "../assets/icon/board";
 import { Board } from "../components/SidebarCommon/BoardSesction";
 import CreateBoardModal from "../components/Modals/CreateBoardModal";
 import DeleteBoardModal from "../components/Modals/DeleteBoardModal";
+import Eye from "../assets/icon/eye";
 
 export default function ClientLayout({
   children,
@@ -57,8 +58,8 @@ export default function ClientLayout({
   }, []);
 
   const handleHideSidebar = useCallback(() => {
-    setIsSidebarVisible(!isSidebarVisible);
-  }, [isSidebarVisible]);
+    setIsSidebarVisible(false);
+  }, []);
 
   const handleCreateBoard = useCallback(
     (name: string, columns: string[] = []) => {
@@ -79,6 +80,10 @@ export default function ClientLayout({
     },
     [allBoards]
   );
+
+  const handleOpenSidebar = useCallback(() => {
+    setIsSidebarVisible(true);
+  }, []);
 
   const handleAddTask = useCallback(() => {
     console.log("Yeah. Task added");
@@ -153,7 +158,7 @@ export default function ClientLayout({
         />
       </div>
       <div className="flex flex-1">
-        {isSidebarVisible && (
+        {isSidebarVisible ? (
           <Sidebar
             boards={allBoards}
             currentBoardId={currentBoardId}
@@ -161,6 +166,13 @@ export default function ClientLayout({
             onHideSidebar={handleHideSidebar}
             onCreateBoard={openCreateBoardModal}
           />
+        ) : (
+          <div
+            className="fixed left-[0px] bottom-[20px] p-[12px] flex items-center justify-center bg-[#635FC7] hover:bg-[#A8A4FF] cursor-pointer rounded-r-[100px] shadow-lg z-50"
+            onClick={handleOpenSidebar}
+          >
+            <Eye color="#fff" width={16} height={16} />
+          </div>
         )}
         <main className={`w-full`}>{children}</main>
       </div>
