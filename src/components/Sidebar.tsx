@@ -29,7 +29,7 @@ const Sidebar = ({
   const toggleTheme = () => {
     const newScheme = isDark ? "light" : "dark";
     const htmlElement = document.documentElement;
-    
+
     // Immediately update the dark class on HTML element FIRST
     // This ensures Tailwind dark: classes work right away
     if (newScheme === "dark") {
@@ -37,62 +37,68 @@ const Sidebar = ({
     } else {
       htmlElement.classList.remove("dark");
     }
-    
+
     // Update Mantine's colorScheme
     setColorScheme(newScheme);
   };
 
   return (
-    <div className="flex flex-col bg-white dark:bg-[#2B2C37] w-[300px] p-[33px] justify-between border-r border-[#E4EBFA] dark:border-[#979797] h-screen overflow-hidden">
-      <div>
-        <BoardSection
-          title="all boards"
-          boards={boards}
-          onSelect={onSelectBoard}
-          count={boards.length}
-          currentBoardId={currentBoardId}
-        />
+    <div className="w-[300px] border-r border-[#E4EBFA] dark:border-[#979797] h-screen bg-white dark:bg-[#2B2C37]">
+      <div className="p-[33px] flex flex-col justify-between h-full">
+        {/* // <div className="flex flex-col bg-white dark:bg-[#2B2C37] w-[300px] p-[33px] justify-between border-r border-[#E4EBFA] dark:border-[#979797] h-screen overflow-hidden"> */}
+        <div>
+          <BoardSection
+            title="all boards"
+            boards={boards}
+            onSelect={onSelectBoard}
+            count={boards.length}
+            currentBoardId={currentBoardId}
+          />
 
-        <div className="flex items-center gap-[8px] whitespace-nowrap">
-          <h4
-            className="cursor-pointer flex items-center gap-[10px] text-[#635FC7] font-semibold whitespace-nowrap"
-            onClick={() => {
-              console.log("Create Board clicked");
-              onCreateBoard();
-            }}
+          <div className="flex items-center gap-[8px] whitespace-nowrap">
+            <h4
+              className="cursor-pointer flex items-center gap-[10px] text-[#635FC7] font-semibold whitespace-nowrap"
+              onClick={() => {
+                console.log("Create Board clicked");
+                onCreateBoard();
+              }}
+            >
+              {/* <span className='w-4 h-4'>{CreateBoardIcon}</span>  */}
+              <BoardIcon color="#635FC7" width={16} height={16} />
+              <span className="whitespace-nowrap">+ Create New Board</span>
+            </h4>
+          </div>
+        </div>
+        <div className="flex flex-col gap-[14px] items-centre">
+          <div
+            className="flex items-center justify-between cursor-pointer py-[8px] px-[44px] bg-[#F4F7FD] dark:bg-[#20212C] rounded-[6px]"
+            onClick={toggleTheme}
           >
-            {/* <span className='w-4 h-4'>{CreateBoardIcon}</span>  */}
-            <BoardIcon color="#635FC7" width={16} height={16} />
-            <span className="whitespace-nowrap">+ Create New Board</span>
-          </h4>
-        </div>
-      </div>
-      <div className="flex flex-col gap-[14px] items-centre">
-        <div
-          className="flex items-center justify-between cursor-pointer py-[8px] px-[44px] bg-[#F4F7FD] dark:bg-[#20212C] rounded-[6px]"
-          onClick={toggleTheme}
-        >
-          <div className="w-[15px] h-[15px]">
-            <Sun color="#828FA3" />
+            <div className="w-[15px] h-[15px]">
+              <Sun color="#828FA3" />
+            </div>
+            <div className="w-[40px] h-[20px]">
+              <Toggle
+                primaryColor={isDark ? "#635FC7" : "#fff"}
+                secondaryColor={isDark ? "#fff" : "#635FC7"}
+                isDark={false}
+              />
+            </div>
+            <div className="w-[15px] h-[15px]">
+              <Moon color="#828FA3" />
+            </div>
           </div>
-          <div className="w-[40px] h-[20px]">
-            <Toggle
-              primaryColor={isDark ? "#635FC7" : "#fff"}
-              secondaryColor={isDark ? "#fff" : "#635FC7"}
-            />
+          <div
+            className="flex items-center cursor-pointer font-bold gap-[6px] text-[#828FA3] px-[26px]"
+            onClick={onHideSidebar}
+          >
+            <Hide color="#828FA3" width={18} height={16} />{" "}
+            <h4>Hide Sidebar</h4>
           </div>
-          <div className="w-[15px] h-[15px]">
-            <Moon color="#828FA3" />
-          </div>
-        </div>
-        <div
-          className="flex items-center cursor-pointer font-bold gap-[6px] text-[#828FA3] px-[26px]"
-          onClick={onHideSidebar}
-        >
-          <Hide color="#828FA3" width={18} height={16} /> <h4>Hide Sidebar</h4>
         </div>
       </div>
     </div>
+    // </div>
   );
 };
 
