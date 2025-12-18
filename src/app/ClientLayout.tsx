@@ -7,12 +7,15 @@ import { Board } from "../components/SidebarCommon/BoardSesction";
 import CreateBoardModal from "../components/Modals/CreateBoardModal";
 import DeleteBoardModal from "../components/Modals/DeleteBoardModal";
 import Eye from "../assets/icon/eye";
+import { useMantineColorScheme } from "@mantine/core";
 
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { colorScheme } = useMantineColorScheme();
+
   const [allBoards, setAllBoards] = useState<Board[]>([]);
   const [currentBoardId, setCurrentBoardId] = useState<string>("");
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
@@ -52,6 +55,15 @@ export default function ClientLayout({
 
     loadBoards();
   }, []);
+
+  //Mantine color scheme effect
+  useEffect(() => {
+    if (colorScheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [colorScheme]);
 
   const handleSelectBoard = useCallback((boardId: string) => {
     setCurrentBoardId(boardId);
