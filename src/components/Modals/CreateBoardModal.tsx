@@ -21,9 +21,8 @@ const CreateBoardModal = ({
   initialName = "",
   initialColumns = ["", ""],
 }: CreateBoardModalProps) => {
-
-   const { colorScheme, setColorScheme } = useMantineColorScheme();
-    const isDark = colorScheme === "dark";
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
 
   const [columns, setColumns] = useState<string[]>(() =>
     initialColumns.length > 0 ? initialColumns : ["", ""]
@@ -55,6 +54,12 @@ const CreateBoardModal = ({
       withCloseButton={false}
       overlayProps={{ backgroundOpacity: 0.55, blur: 4 }}
       size={480}
+      styles={{
+        content: { 
+          backgroundColor: isDark ? "#2b2c37" : "#fff",
+          overflow: "hidden"
+        },
+      }}
     >
       <div className="flex flex-col gap-4 bg-white dark:bg-[#2B2C37] p-[12px] rounded-[6px]">
         <h2 className={`text-lg font-bold ${textColor}`}>{title} Board</h2>
@@ -74,7 +79,9 @@ const CreateBoardModal = ({
           {({ handleSubmit }) => (
             <form onSubmit={handleSubmit} className="flex flex-col gap-[12px]">
               <label className="flex flex-col gap-[8px]">
-                <span className={`${textColor} font-medium text-[#828FA3]`}>Name</span>
+                <span className={`${textColor} font-medium text-[#828FA3]`}>
+                  Name
+                </span>
                 <Field
                   name="name"
                   type="text"
@@ -84,7 +91,9 @@ const CreateBoardModal = ({
               </label>
 
               <label className="flex flex-col gap-[10px] w-full">
-                <span className={`${textColor} font-medium text-[#828FA3]`}>Columns</span>
+                <span className={`${textColor} font-medium text-[#828FA3]`}>
+                  Columns
+                </span>
 
                 {columns.map((column, index) => (
                   <div key={index} className="flex gap-[10px] items-center">

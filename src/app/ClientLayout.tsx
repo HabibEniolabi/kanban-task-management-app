@@ -8,6 +8,7 @@ import CreateBoardModal from "../components/Modals/CreateBoardModal";
 import DeleteBoardModal from "../components/Modals/DeleteBoardModal";
 import Eye from "../assets/icon/eye";
 import { useMantineColorScheme } from "@mantine/core";
+import CreateAddEditBoardModal from "../components/Modals/CreateAddEditBoardModal";
 
 export default function ClientLayout({
   children,
@@ -22,6 +23,7 @@ export default function ClientLayout({
   const [createBoardModalOpen, setCreateBoardModalOpen] =
     useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [addEditModalOpen, setAddEditModalOpen] = useState<boolean>(false)
 
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [modalBoardData, setModalBoardData] = useState<Board | null>(null);
@@ -98,8 +100,9 @@ export default function ClientLayout({
   }, []);
 
   const handleAddTask = useCallback(() => {
-    console.log("Yeah. Task added");
-    // Add your actual task logic here
+    setModalMode("create");
+    setModalBoardData(null);
+    setAddEditModalOpen(true);
   }, []);
 
   const openCreateBoardModal = useCallback(() => {
@@ -158,6 +161,14 @@ export default function ClientLayout({
 
     setDeleteModalOpen(false);
   }, [currentBoardId]);
+  
+  const handleCreateTask = useCallback(
+    (name: string, columns: string[] = []) => {
+      // Implement task creation logic here
+      setAddEditModalOpen(false);
+    },
+    []
+  );
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -207,6 +218,14 @@ export default function ClientLayout({
         subTitle={`Are you sure you want to delete the ‘${
           allBoards.find((b) => b.id === currentBoardId)?.name ?? ""
         }’ board? This action will remove all columns and tasks and cannot be reversed.`}
+      />
+      <CreateAddEditBoardModal
+        title={modalMode === "edit" ? "Edit" : "Add New"}
+        initialName={modalBoardData?.name || ""}
+        initialColumns={modalBoardData?.columns?.map((c) => c.name) || ["", ""]}
+        onSubmit={modalMode === "edit" ? handleEditBoardSubmit : handleCreateTask}
+        onClose={() => setAddEditModalOpen(false)}
+        opened={addEditModalOpen}
       />
     </div>
   );
