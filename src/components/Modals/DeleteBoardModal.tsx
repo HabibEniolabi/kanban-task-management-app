@@ -1,4 +1,4 @@
-import { Modal } from "@mantine/core";
+import { Modal, useMantineColorScheme } from "@mantine/core";
 import React from "react";
 
 interface DeleteBoardModalProps {
@@ -16,6 +16,8 @@ const DeleteBoardModal = ({
   title,
   subTitle,
 }: DeleteBoardModalProps) => {
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
   return (
     <div>
       <Modal
@@ -40,7 +42,7 @@ const DeleteBoardModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-[32px] cursor-pointer p-[4px] w-full border-none font-bold bg-[#635FC7]/10 text-[#635FC7]"
+              className="rounded-[32px] cursor-pointer p-[4px] w-full border-none font-bold bg-[#635FC7]/10 dark:bg-[#fff] text-[#635FC7]"
             >
               Cancel
             </button>

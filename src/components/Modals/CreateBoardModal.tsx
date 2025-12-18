@@ -1,6 +1,6 @@
 "use client";
 import Cancel from "@/src/assets/icon/cancel";
-import { Modal } from "@mantine/core";
+import { Modal, useMantineColorScheme } from "@mantine/core";
 import { useState } from "react";
 import { Formik, Field } from "formik";
 
@@ -21,6 +21,10 @@ const CreateBoardModal = ({
   initialName = "",
   initialColumns = ["", ""],
 }: CreateBoardModalProps) => {
+
+   const { colorScheme, setColorScheme } = useMantineColorScheme();
+    const isDark = colorScheme === "dark";
+
   const [columns, setColumns] = useState<string[]>(() =>
     initialColumns.length > 0 ? initialColumns : ["", ""]
   );
@@ -41,6 +45,8 @@ const CreateBoardModal = ({
     setColumns(updated);
   };
 
+  const textColor = isDark ? "text-white" : "text-[#000112]";
+
   return (
     <Modal
       opened={opened}
@@ -50,8 +56,8 @@ const CreateBoardModal = ({
       overlayProps={{ backgroundOpacity: 0.55, blur: 4 }}
       size={480}
     >
-      <div className="flex flex-col gap-4 bg-white p-[12px] rounded-[6px]">
-        <h2 className="text-lg font-bold text-[#000112]">{title} Board</h2>
+      <div className="flex flex-col gap-4 bg-white dark:bg-[#2B2C37] p-[12px] rounded-[6px]">
+        <h2 className={`text-lg font-bold ${textColor}`}>{title} Board</h2>
 
         <Formik
           enableReinitialize
@@ -68,17 +74,17 @@ const CreateBoardModal = ({
           {({ handleSubmit }) => (
             <form onSubmit={handleSubmit} className="flex flex-col gap-[12px]">
               <label className="flex flex-col gap-[8px]">
-                <span className="font-medium text-[#828FA3]">Name</span>
+                <span className={`${textColor} font-medium text-[#828FA3]`}>Name</span>
                 <Field
                   name="name"
                   type="text"
                   placeholder="e.g. Project Alpha"
-                  className="border border-[#828FA3] rounded-[6px] p-[12px] text-[#000112]"
+                  className="border border-[#828FA3] rounded-[6px] p-[12px] text-[#000112] dark:text-[#fff]"
                 />
               </label>
 
               <label className="flex flex-col gap-[10px] w-full">
-                <span className="font-medium text-[#828FA3]">Columns</span>
+                <span className={`${textColor} font-medium text-[#828FA3]`}>Columns</span>
 
                 {columns.map((column, index) => (
                   <div key={index} className="flex gap-[10px] items-center">
@@ -89,7 +95,7 @@ const CreateBoardModal = ({
                       onChange={(e) =>
                         handleUpdateColumn(index, e.target.value)
                       }
-                      className="border border-[#828FA3]/30 w-full p-[10px] rounded-[8px] text-[12px]"
+                      className="border border-[#828FA3]/30 w-full p-[10px] rounded-[8px] text-[12px] dark:text-[#fff]"
                     />
                     <div
                       onClick={() => handleDeleteColumn(index)}
@@ -104,7 +110,7 @@ const CreateBoardModal = ({
               <button
                 type="button"
                 onClick={handleAddColumn}
-                className="bg-[#A8A4FF] text-[#fff] border-none cursor-pointer p-[10px] font-bold rounded-[32px]"
+                className="bg-[#A8A4FF] text-[#fff] dark:bg-[#fff]  dark:text-[#A8A4FF] border-none cursor-pointer p-[10px] font-bold rounded-[32px]"
               >
                 + Add New Column
               </button>

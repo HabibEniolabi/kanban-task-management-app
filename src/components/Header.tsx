@@ -72,11 +72,11 @@ const Header: React.FC<HeaderProps> = ({
               </Menu.Target>
 
               <Menu.Dropdown>
-                <Menu.Item color="#828FA3" onClick={onEditBoard}>
+                <Menu.Item  color="#828FA3" onClick={onEditBoard}>
                   Edit Board
                 </Menu.Item>
 
-                <Menu.Item color="red" onClick={onDeleteBoard}>
+                <Menu.Item  color="red" onClick={onDeleteBoard}>
                   Delete Board
                 </Menu.Item>
               </Menu.Dropdown>

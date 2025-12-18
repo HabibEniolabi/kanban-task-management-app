@@ -45,7 +45,6 @@ const Sidebar = ({
   return (
     <div className="w-[300px] border-r border-[#E4EBFA] dark:border-[#979797] h-screen bg-white dark:bg-[#2B2C37]">
       <div className="p-[33px] flex flex-col justify-between h-full">
-        {/* // <div className="flex flex-col bg-white dark:bg-[#2B2C37] w-[300px] p-[33px] justify-between border-r border-[#E4EBFA] dark:border-[#979797] h-screen overflow-hidden"> */}
         <div>
           <BoardSection
             title="all boards"
@@ -98,7 +97,6 @@ const Sidebar = ({
         </div>
       </div>
     </div>
-    // </div>
   );
 };
 
