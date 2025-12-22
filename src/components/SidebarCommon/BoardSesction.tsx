@@ -1,4 +1,5 @@
 import React from "react";
+import { Task } from "@/src/types/task";
 
 export interface Board {
   id: string;
@@ -7,7 +8,7 @@ export interface Board {
   columns?: Array<{
     id: string;
     name: string;
-    tasks: unknown[];
+    tasks: Task[];
   }>;
 }
 

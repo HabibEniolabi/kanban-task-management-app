@@ -9,6 +9,10 @@ import DeleteBoardModal from "../components/Modals/DeleteBoardModal";
 import Eye from "../assets/icon/eye";
 import { useMantineColorScheme } from "@mantine/core";
 import CreateAddEditBoardModal from "../components/Modals/CreateAddEditBoardModal";
+import { ApiBoard } from "@/src/types/api";
+import BoardPage from "../components/BoardPage";
+import { Task } from "../types/task";
+import CreateTaskBoardModal from "../components/Modals/CreateTaskBoardModal";
 
 export default function ClientLayout({
   children,
@@ -23,7 +27,10 @@ export default function ClientLayout({
   const [createBoardModalOpen, setCreateBoardModalOpen] =
     useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
-  const [addEditModalOpen, setAddEditModalOpen] = useState<boolean>(false)
+  const [addEditModalOpen, setAddEditModalOpen] = useState<boolean>(false);
+
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isOpenTaskModal, setISOpenTaskModal] = useState(false);
 
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [modalBoardData, setModalBoardData] = useState<Board | null>(null);
@@ -38,12 +45,29 @@ export default function ClientLayout({
         }
 
         const json = await response.json();
-        const jsonBoards = (json?.boards ?? []) as Array<{ name: string }>;
+        const jsonBoards = (json?.boards ?? []) as ApiBoard[];
 
         const mappedBoards: Board[] = jsonBoards.map((board, index) => ({
           id: String(index + 1),
           name: board.name,
           icon: <BoardIcon color="#828FA3" />,
+          columns: board.columns.map((column, colIndex) => ({
+            id: `col-${index}-${colIndex}`,
+            name: column.name,
+            tasks: column.tasks.map((task, taskIndex) => ({
+              id: `task-${index}-${colIndex}-${taskIndex}`,
+              title: task.title,
+              description: task.description,
+              status: task.status,
+              boardId: `board-${index}`,
+              columnId: `col-${index}-${colIndex}`,
+              subtasks: task.subtasks.map((subtask, subIndex) => ({
+                id: `subtask-${index}-${colIndex}-${taskIndex}-${subIndex}`,
+                title: subtask.title,
+                isCompleted: subtask.isCompleted,
+              })),
+            })),
+          })),
         }));
 
         setAllBoards(mappedBoards);
@@ -161,7 +185,7 @@ export default function ClientLayout({
 
     setDeleteModalOpen(false);
   }, [currentBoardId]);
-  
+
   const handleCreateTask = useCallback(
     (name: string, columns: string[] = []) => {
       // Implement task creation logic here
@@ -169,6 +193,13 @@ export default function ClientLayout({
     },
     []
   );
+
+  const currentBoard = allBoards.find((b) => b.id === currentBoardId);
+
+  const handleOpenTask = useCallback((task: Task) => {
+    setISOpenTaskModal(true);
+    setSelectedTask(task);
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -197,7 +228,11 @@ export default function ClientLayout({
             <Eye color="#fff" width={16} height={16} />
           </div>
         )}
-        <main className={`w-full`}>{children}</main>
+        <main className={`w-full flex-1 overflow-x-auto`}>
+          {currentBoard && (
+            <BoardPage board={currentBoard} onOpenTask={handleOpenTask} />
+          )}
+        </main>
       </div>
       <CreateBoardModal
         key={`${modalMode}-${currentBoardId}`}
@@ -223,10 +258,77 @@ export default function ClientLayout({
         title={modalMode === "edit" ? "Edit" : "Add New"}
         initialName={modalBoardData?.name || ""}
         initialColumns={modalBoardData?.columns?.map((c) => c.name) || ["", ""]}
-        onSubmit={modalMode === "edit" ? handleEditBoardSubmit : handleCreateTask}
+        onSubmit={
+          modalMode === "edit" ? handleEditBoardSubmit : handleCreateTask
+        }
         onClose={() => setAddEditModalOpen(false)}
         opened={addEditModalOpen}
       />
+      {selectedTask && currentBoard && (
+        <CreateTaskBoardModal
+          opened={isOpenTaskModal}
+          onClose={() => {
+            setISOpenTaskModal(false);
+            setSelectedTask(null);
+          }}
+          title={selectedTask.title}
+          subTitle={selectedTask.description}
+          task={selectedTask}
+          columns={currentBoard.columns ?? []}
+          onSubtaskToggle={(subtaskId) => {
+            setAllBoards((boards) =>
+              boards.map((board) =>
+                board.id !== currentBoardId
+                  ? board
+                  : {
+                      ...board,
+                      columns: board.columns?.map((col) => ({
+                        ...col,
+                        tasks: col.tasks.map((task) =>
+                          task.id !== selectedTask.id
+                            ? task
+                            : {
+                                ...task,
+                                subtasks: task.subtasks.map((sub) =>
+                                  sub.id === subtaskId
+                                    ? { ...sub, isCompleted: !sub.isCompleted }
+                                    : sub
+                                ),
+                              }
+                        ),
+                      })),
+                    }
+              )
+            );
+          }}
+          onStatusChange={(newColumnId) => {
+            setAllBoards((boards) =>
+              boards.map((board) =>
+                board.id !== currentBoardId
+                  ? board
+                  : {
+                      ...board,
+                      columns: board.columns?.map((col) => ({
+                        ...col,
+                        tasks:
+                          col.id === newColumnId
+                            ? [
+                                ...col.tasks,
+                                { ...selectedTask, columnId: newColumnId },
+                              ]
+                            : col.tasks.filter(
+                                (task) => task.id !== selectedTask.id
+                              ),
+                      })),
+                    }
+              )
+            );
+          }}
+          onEdit={() => console.log("Edit task")}
+          onDelete={() => console.log("Delete task")}
+          onSubmit={() => {}}
+        />
+      )}
     </div>
   );
 }

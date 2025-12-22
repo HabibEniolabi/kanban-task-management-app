@@ -58,11 +58,9 @@ const Sidebar = ({
             <h4
               className="cursor-pointer flex items-center gap-[10px] text-[#635FC7] font-semibold whitespace-nowrap"
               onClick={() => {
-                console.log("Create Board clicked");
                 onCreateBoard();
               }}
             >
-              {/* <span className='w-4 h-4'>{CreateBoardIcon}</span>  */}
               <BoardIcon color="#635FC7" width={16} height={16} />
               <span className="whitespace-nowrap">+ Create New Board</span>
             </h4>

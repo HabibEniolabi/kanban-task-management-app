@@ -12,7 +12,7 @@ interface CreateAddEditBoardModalProps {
   onSubmit: (name: string, columns: string[]) => void;
   onClose: () => void;
   opened: boolean;
-}
+} 
 
 const CreateAddEditBoardModal = ({
   title,
@@ -169,7 +169,6 @@ const CreateAddEditBoardModal = ({
       appearance-none
       cursor-pointer
       focus:outline-none focus:border-b-2 focus:border-[#635FC7]
-      rounded-none
     "
                   >
                     <option value="todo" selected>
