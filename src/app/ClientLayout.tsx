@@ -228,7 +228,7 @@ export default function ClientLayout({
             <Eye color="#fff" width={16} height={16} />
           </div>
         )}
-        <main className={`w-full flex-1 overflow-x-auto`}>
+        <main className={`w-full flex-1 overflow-x-auto dark:bg-[#2B2C37] bg-[#F4F7FD]`}>
           {currentBoard && (
             <BoardPage board={currentBoard} onOpenTask={handleOpenTask} />
           )}
