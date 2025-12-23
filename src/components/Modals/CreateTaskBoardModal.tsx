@@ -71,7 +71,7 @@ const CreateTaskBoardModal = ({
           <div>
             <Menu shadow="md" width={200} position="bottom-end">
               <Menu.Target>
-                <button className="h-[18px] w-[18px] bg-transparent border-none cursor-pointer flex items-center justify-center">
+                <button className="h-[18px] w-[18px]  cursor-pointer flex items-center justify-center">
                   <Ellipsis color="#828FA3" width={48} height={18} />
                 </button>
               </Menu.Target>
@@ -120,7 +120,7 @@ const CreateTaskBoardModal = ({
                     cursor-pointer
                   "
                   />
-                <span className={`text-[13px] dark:text-[#fff] text-[#000112] bg-[#828FA3]/24 p-[4px] rounded-[4px] ${subtask.isCompleted ? 'text-[#828FA3] line-through' : 'text-[#000112] dark:text-white'}`}>
+                <span className={`text-[13px] font-bold text-[#000112] p-[4px] rounded-[4px] ${subtask.isCompleted ? 'text-[#828FA3] line-through' : 'text-[#000112] dark:text-white'}`}>
                     {subtask.title}
                   </span>
                 </div>

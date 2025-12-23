@@ -11,7 +11,7 @@ import { useMantineColorScheme } from "@mantine/core";
 import CreateAddEditBoardModal from "../components/Modals/CreateAddEditBoardModal";
 import { ApiBoard } from "@/src/types/api";
 import BoardPage from "../components/BoardPage";
-import { Task } from "../types/task";
+import { Task, Column } from "../types/task";
 import CreateTaskBoardModal from "../components/Modals/CreateTaskBoardModal";
 
 export default function ClientLayout({
@@ -201,6 +201,29 @@ export default function ClientLayout({
     setSelectedTask(task);
   }, []);
 
+ const handleAddColumn = useCallback(() => {
+  if (!currentBoardId) return;
+
+  setAllBoards((boards) =>
+    boards.map((board) =>
+      board.id !== currentBoardId
+        ? board
+        : {
+            ...board,
+            columns: [
+              ...(board.columns ?? []),
+              {
+                id: `col-${Date.now()}`,
+                name: "New Column",
+                tasks: [],
+              },
+            ],
+          }
+    )
+  );
+}, [currentBoardId]);
+
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex w-full">
@@ -228,9 +251,15 @@ export default function ClientLayout({
             <Eye color="#fff" width={16} height={16} />
           </div>
         )}
-        <main className={`w-full flex-1 overflow-x-auto dark:bg-[#2B2C37] bg-[#F4F7FD]`}>
+        <main
+          className={`w-full flex-1 overflow-x-auto dark:bg-[#2B2C37] bg-[#F4F7FD]`}
+        >
           {currentBoard && (
-            <BoardPage board={currentBoard} onOpenTask={handleOpenTask} />
+            <BoardPage
+              board={currentBoard}
+              onOpenTask={handleOpenTask}
+              onClick={handleAddColumn}
+            />
           )}
         </main>
       </div>

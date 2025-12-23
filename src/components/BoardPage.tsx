@@ -9,16 +9,17 @@ import { Task } from "@/src/types/task";
 interface BoardPageProps {
   board: Board;
   onOpenTask: (task: Task) => void;
+  onClick: () => void;
 }
 
-const BoardPage = ({ board, onOpenTask }: BoardPageProps) => {
+const BoardPage = ({ board, onOpenTask, onClick }: BoardPageProps) => {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
 
   return (
-    <div className="flex gap-[12px] p-[24px]">
+    <div className="flex flex-nowrap gap-[12px] p-[24px] overflow-x-auto w-full no-scrollbar">
       {board.columns?.map((column) => (
-        <div className="w-[280px]" key={column.id}>
+        <div className="w-[280px] shrink-0" key={column.id}>
           <div className="flex items-center gap-3 mb-[12px]">
             {/* Colored dot */}
             <span
@@ -43,6 +44,9 @@ const BoardPage = ({ board, onOpenTask }: BoardPageProps) => {
           })}
         </div>
       ))}
+      <div className="bg-[#E4EBFA] dark:bg-[#2B2C37]/50 text-[#635FC7] w-[280px] shrink-0 flex items-center justify-center">
+        <div className="cursor-pointer font-bold text-[24px]" onClick={onClick}> + New Column</div>
+      </div>
     </div>
   );
 };
