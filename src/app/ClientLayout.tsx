@@ -166,6 +166,55 @@ export default function ClientLayout({
     [currentBoardId]
   );
 
+  const handleEditTaskSubmit = useCallback(
+    (
+      title: string,
+      description: string,
+      columnId: string,
+      subtasks: { title: string }[]
+    ) => {
+      if (!currentBoardId || !selectedTask) return;
+
+      setAllBoards((boards) =>
+        boards.map((board) =>
+          board.id !== currentBoardId
+            ? board
+            : {
+                ...board,
+                columns: board.columns?.map((col) => ({
+                  ...col,
+                  tasks:
+                    col.id === columnId
+                      ? [
+                          ...col.tasks.filter((t) => t.id !== selectedTask.id),
+                          {
+                            ...selectedTask,
+                            title,
+                            description,
+                            columnId,
+                            status: columnId,
+                            subtasks: subtasks.map((s, i) => ({
+                              id:
+                                selectedTask.subtasks[i]?.id ??
+                                `subtask-${Date.now()}-${i}`,
+                              title: s.title,
+                              isCompleted:
+                                selectedTask.subtasks[i]?.isCompleted ?? false,
+                            })),
+                          },
+                        ]
+                      : col.tasks.filter((t) => t.id !== selectedTask.id),
+                })),
+              }
+        )
+      );
+
+      setSelectedTask(null);
+      setAddEditModalOpen(false);
+    },
+    [currentBoardId, selectedTask]
+  );
+
   const openDeleteBoardModal = useCallback(() => {
     setDeleteModalOpen(true);
   }, []);
@@ -187,11 +236,48 @@ export default function ClientLayout({
   }, [currentBoardId]);
 
   const handleCreateTask = useCallback(
-    (name: string, columns: string[] = []) => {
-      // Implement task creation logic here
+    (
+      title: string,
+      description: string,
+      columnId: string,
+      subtasks: { title: string }[]
+    ) => {
+      if (!currentBoardId) return;
+
+      const newTask: Task = {
+        id: `task-${Date.now()}`,
+        title,
+        description,
+        status: columnId,
+        boardId: currentBoardId,
+        columnId,
+        subtasks: subtasks.map((sub, index) => ({
+          id: `subtask-${Date.now()}-${index}`,
+          title: sub.title,
+          isCompleted: false,
+        })),
+      };
+      setAllBoards((boards) =>
+        boards.map((board) =>
+          board.id !== currentBoardId
+            ? board
+            : {
+                ...board,
+                columns: board.columns?.map((col) =>
+                  col.id === columnId
+                    ? {
+                        ...col,
+                        tasks: [...col.tasks, newTask],
+                      }
+                    : col
+                ),
+              }
+        )
+      );
+
       setAddEditModalOpen(false);
     },
-    []
+    [currentBoardId]
   );
 
   const currentBoard = allBoards.find((b) => b.id === currentBoardId);
@@ -201,28 +287,27 @@ export default function ClientLayout({
     setSelectedTask(task);
   }, []);
 
- const handleAddColumn = useCallback(() => {
-  if (!currentBoardId) return;
+  const handleAddColumn = useCallback(() => {
+    if (!currentBoardId) return;
 
-  setAllBoards((boards) =>
-    boards.map((board) =>
-      board.id !== currentBoardId
-        ? board
-        : {
-            ...board,
-            columns: [
-              ...(board.columns ?? []),
-              {
-                id: `col-${Date.now()}`,
-                name: "New Column",
-                tasks: [],
-              },
-            ],
-          }
-    )
-  );
-}, [currentBoardId]);
-
+    setAllBoards((boards) =>
+      boards.map((board) =>
+        board.id !== currentBoardId
+          ? board
+          : {
+              ...board,
+              columns: [
+                ...(board.columns ?? []),
+                {
+                  id: `col-${Date.now()}`,
+                  name: "New Column",
+                  tasks: [],
+                },
+              ],
+            }
+      )
+    );
+  }, [currentBoardId]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -283,16 +368,17 @@ export default function ClientLayout({
           allBoards.find((b) => b.id === currentBoardId)?.name ?? ""
         }’ board? This action will remove all columns and tasks and cannot be reversed.`}
       />
-      <CreateAddEditBoardModal
-        title={modalMode === "edit" ? "Edit" : "Add New"}
-        initialName={modalBoardData?.name || ""}
-        initialColumns={modalBoardData?.columns?.map((c) => c.name) || ["", ""]}
+      {currentBoard && (
+        <CreateAddEditBoardModal
+        title={ selectedTask ? "Edit" : "Add New"}
         onSubmit={
-          modalMode === "edit" ? handleEditBoardSubmit : handleCreateTask
+           selectedTask ? handleEditTaskSubmit : handleCreateTask
         }
         onClose={() => setAddEditModalOpen(false)}
         opened={addEditModalOpen}
+        columns={currentBoard.columns ?? []}
       />
+      )}
       {selectedTask && currentBoard && (
         <CreateTaskBoardModal
           opened={isOpenTaskModal}

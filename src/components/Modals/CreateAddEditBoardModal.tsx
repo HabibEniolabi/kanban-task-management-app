@@ -5,47 +5,55 @@ import { Field, Form, Formik } from "formik";
 import { desc } from "framer-motion/client";
 import React, { useState } from "react";
 
+interface SubtaskInput {
+  title: string;
+}
+
 interface CreateAddEditBoardModalProps {
   title: string;
-  initialName?: string;
-  initialColumns?: string[];
-  onSubmit: (name: string, columns: string[]) => void;
+  columns: { id: string; name: string }[];
+  onSubmit: (
+    title: string,
+    description: string,
+    columnId: string,
+    subtasks: SubtaskInput[],
+  ) => void;
   onClose: () => void;
   opened: boolean;
-} 
+}
 
 const CreateAddEditBoardModal = ({
   title,
-  initialName = "",
-  initialColumns = ["", ""],
   onSubmit,
   onClose,
   opened,
+  columns,
 }: CreateAddEditBoardModalProps) => {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
 
-  const [columns, setColumns] = useState<string[]>(() =>
-    initialColumns.length > 0 ? initialColumns : ["", ""]
-  );
+  const [subtasks, setSubtasks] = useState<SubtaskInput[]>([
+    { title: "" },
+    { title: "" },
+  ]);
+
+  const [columnId, setColumnId] = useState(columns[0]?.id ?? "");
 
   const handleDeleteColumn = (index: number) => {
-    if (columns.length > 1) {
-      setColumns(columns.filter((_, i) => i !== index));
-    }
+    setSubtasks((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleAddColumn = () => {
-    setColumns([...columns, ""]);
+    setSubtasks((prev) => [...prev, { title: "" }]);
   };
 
-  const handleUpdateColumn = (index: number, value: string) => {
-    const updated = [...columns];
-    updated[index] = value;
-    setColumns(updated);
-  };
+  const handleUpdateColumn = (index: number, value: string) =>
+    setSubtasks((prev) =>
+      prev.map((s, i) => (i === index ? { title: value } : s))
+    );
 
   const textColor = isDark ? "text-white" : "text-[#000112]";
+
   return (
     <Modal
       opened={opened}
@@ -71,12 +79,14 @@ const CreateAddEditBoardModal = ({
         </h2>
         <Formik
           enableReinitialize
-          initialValues={{ name: initialName, description: "" }}
+          initialValues={{ title: "", description: "" }}
           onSubmit={(values) => {
-            const filteredColumns = columns
-              .map((c) => c.trim())
-              .filter(Boolean);
-            onSubmit(values.name.trim(), filteredColumns);
+            onSubmit(
+              values.title.trim(),
+              values.description.trim(),
+              columnId,
+              subtasks.filter((s) => s.title.trim() !== "")
+            );
             onClose();
           }}
         >
@@ -116,11 +126,11 @@ const CreateAddEditBoardModal = ({
                 >
                   Subtasks
                 </span>
-                {columns.map((column, index) => (
+                {subtasks.map((subtask, index) => (
                   <div key={index} className="flex gap-[10px] items-center">
                     <input
                       type="text"
-                      value={column}
+                      value={subtask.title}
                       placeholder={`Subtask ${index + 1}`}
                       onChange={(e) =>
                         handleUpdateColumn(index, e.target.value)
@@ -171,14 +181,9 @@ const CreateAddEditBoardModal = ({
       focus:outline-none focus:border-b-2 focus:border-[#635FC7]
     "
                   >
-                    <option value="todo" selected>
-                      Todo
-                    </option>
-                    <option value="doing">Doing</option>
-                    <option value="done">Done</option>
-                    {columns.map((column, index) => (
-                      <option key={index} value={column.toLowerCase()}>
-                        {column}
+                    {columns.map((column) => (
+                      <option key={column.id} value={column.id}>
+                        {column.name}
                       </option>
                     ))}
                   </select>
