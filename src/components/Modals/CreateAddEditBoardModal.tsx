@@ -99,10 +99,10 @@ const CreateAddEditBoardModal = ({
                   Title
                 </span>
                 <Field
-                  name="name"
+                  name="title"
                   type="text"
                   placeholder="e.g. Take a coffee break"
-                  className="border border-[#828FA3] rounded-[6px] p-[12px] text-[#000112] dark:text-[#fff]]"
+                  className="border border-[#828FA3] rounded-[6px] p-[12px] text-[#000112] dark:text-[#fff]"
                 />
               </label>
 
@@ -150,7 +150,7 @@ const CreateAddEditBoardModal = ({
               <button
                 type="button"
                 onClick={handleAddColumn}
-                className="bg-[#A8A4FF] text-[#fff] dark:bg-[#fff] dark:text-[#A8A4FF] border-none cursor-pointer p-[10px] font-bold rounded-[32px]"
+                className="bg-[#635FC7]/10 dark:bg-[#fff] text-[#635FC7] border-none cursor-pointer p-[10px] font-bold rounded-[32px]"
               >
                 + Add New Subtask
               </button>
