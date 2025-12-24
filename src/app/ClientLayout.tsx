@@ -11,7 +11,7 @@ import { useMantineColorScheme } from "@mantine/core";
 import CreateAddEditBoardModal from "../components/Modals/CreateAddEditBoardModal";
 import { ApiBoard } from "@/src/types/api";
 import BoardPage from "../components/BoardPage";
-import { Task, Column } from "../types/task";
+import { Task } from "../types/task";
 import CreateTaskBoardModal from "../components/Modals/CreateTaskBoardModal";
 
 export default function ClientLayout({
@@ -22,6 +22,7 @@ export default function ClientLayout({
   const { colorScheme } = useMantineColorScheme();
 
   const [allBoards, setAllBoards] = useState<Board[]>([]);
+  const [allTask, setAllTask] = useState<Task[]>([]);
   const [currentBoardId, setCurrentBoardId] = useState<string>("");
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
   const [createBoardModalOpen, setCreateBoardModalOpen] =
@@ -309,6 +310,27 @@ export default function ClientLayout({
     );
   }, [currentBoardId]);
 
+  const handleDeleteTask = useCallback(() => {
+    if (!selectedTask || !currentBoardId) return;
+
+    setAllBoards((boards) =>
+      boards.map((board) =>
+        board.id !== currentBoardId
+          ? board
+          : {
+              ...board,
+              columns: board.columns?.map((col) => ({
+                ...col,
+                tasks: col.tasks.filter((task) => task.id !== selectedTask.id),
+              })),
+            }
+      )
+    );
+
+    setSelectedTask(null);
+    setISOpenTaskModal(false);
+  }, [currentBoardId, selectedTask]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex w-full">
@@ -370,14 +392,12 @@ export default function ClientLayout({
       />
       {currentBoard && (
         <CreateAddEditBoardModal
-        title={ selectedTask ? "Edit" : "Add New"}
-        onSubmit={
-           selectedTask ? handleEditTaskSubmit : handleCreateTask
-        }
-        onClose={() => setAddEditModalOpen(false)}
-        opened={addEditModalOpen}
-        columns={currentBoard.columns ?? []}
-      />
+          title={selectedTask ? "Edit" : "Add New"}
+          onSubmit={selectedTask ? handleEditTaskSubmit : handleCreateTask}
+          onClose={() => setAddEditModalOpen(false)}
+          opened={addEditModalOpen}
+          columns={currentBoard.columns ?? []}
+        />
       )}
       {selectedTask && currentBoard && (
         <CreateTaskBoardModal
@@ -440,7 +460,7 @@ export default function ClientLayout({
             );
           }}
           onEdit={() => console.log("Edit task")}
-          onDelete={() => console.log("Delete task")}
+          onDelete={handleDeleteTask}
           onSubmit={() => {}}
         />
       )}
