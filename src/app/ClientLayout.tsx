@@ -22,7 +22,6 @@ export default function ClientLayout({
   const { colorScheme } = useMantineColorScheme();
 
   const [allBoards, setAllBoards] = useState<Board[]>([]);
-  const [allTask, setAllTask] = useState<Task[]>([]);
   const [currentBoardId, setCurrentBoardId] = useState<string>("");
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
   const [createBoardModalOpen, setCreateBoardModalOpen] =
@@ -34,6 +33,9 @@ export default function ClientLayout({
   const [isOpenTaskModal, setISOpenTaskModal] = useState(false);
 
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const [deleteModalMode, setDeleteModalMode] = useState<"create" | "edit">(
+    "create"
+  );
   const [modalBoardData, setModalBoardData] = useState<Board | null>(null);
 
   // Load boards from public/data.json on mount
@@ -145,6 +147,12 @@ export default function ClientLayout({
     }
   }, [allBoards, currentBoardId]);
 
+  const openEditTaskModal = useCallback(() => {
+    setISOpenTaskModal(false);
+    setModalMode("edit");
+    setAddEditModalOpen(true);
+  }, []);
+
   const handleEditBoardSubmit = useCallback(
     (name: string, columns: string[] = []) => {
       setAllBoards((boards) =>
@@ -218,6 +226,13 @@ export default function ClientLayout({
 
   const openDeleteBoardModal = useCallback(() => {
     setDeleteModalOpen(true);
+    setDeleteModalMode("create");
+  }, []);
+
+  const onDeleteTaskModal = useCallback(() => {
+    setDeleteModalOpen(true);
+    setISOpenTaskModal(false);
+    setDeleteModalMode("edit");
   }, []);
 
   const handleDeleteBoard = useCallback(() => {
@@ -310,27 +325,6 @@ export default function ClientLayout({
     );
   }, [currentBoardId]);
 
-  const handleDeleteTask = useCallback(() => {
-    if (!selectedTask || !currentBoardId) return;
-
-    setAllBoards((boards) =>
-      boards.map((board) =>
-        board.id !== currentBoardId
-          ? board
-          : {
-              ...board,
-              columns: board.columns?.map((col) => ({
-                ...col,
-                tasks: col.tasks.filter((task) => task.id !== selectedTask.id),
-              })),
-            }
-      )
-    );
-
-    setSelectedTask(null);
-    setISOpenTaskModal(false);
-  }, [currentBoardId, selectedTask]);
-
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex w-full">
@@ -385,10 +379,16 @@ export default function ClientLayout({
         opened={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onSubmit={handleDeleteBoard}
-        title={"board"}
-        subTitle={`Are you sure you want to delete the ‘${
-          allBoards.find((b) => b.id === currentBoardId)?.name ?? ""
-        }’ board? This action will remove all columns and tasks and cannot be reversed.`}
+        title={deleteModalMode === "edit" ? "task" : "board"}
+        subTitle={
+          deleteModalMode === "edit"
+            ? `Are you sure you want to delete the ‘${
+                selectedTask?.title.split(" ").slice(0, 3).join(" ") ?? ""
+              }’ task and its subtasks?  This action cannot be reversed.`
+            : `Are you sure you want to delete the ‘${
+                allBoards.find((b) => b.id === currentBoardId)?.name ?? ""
+              }’ board? This action will remove all columns and tasks and cannot be reversed.`
+        }
       />
       {currentBoard && (
         <CreateAddEditBoardModal
@@ -435,6 +435,18 @@ export default function ClientLayout({
                     }
               )
             );
+            setSelectedTask((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    subtasks: prev.subtasks.map((sub) =>
+                      sub.id === subtaskId
+                        ? { ...sub, isCompleted: !sub.isCompleted }
+                        : sub
+                    ),
+                  }
+                : prev
+            );
           }}
           onStatusChange={(newColumnId) => {
             setAllBoards((boards) =>
@@ -459,8 +471,8 @@ export default function ClientLayout({
               )
             );
           }}
-          onEdit={() => console.log("Edit task")}
-          onDelete={handleDeleteTask}
+          onEdit={openEditTaskModal}
+          onDelete={onDeleteTaskModal}
           onSubmit={() => {}}
         />
       )}
