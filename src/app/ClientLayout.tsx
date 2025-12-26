@@ -230,10 +230,39 @@ export default function ClientLayout({
   }, []);
 
   const onDeleteTaskModal = useCallback(() => {
+    if (!selectedTask || !currentBoardId) return;
+
     setDeleteModalOpen(true);
     setISOpenTaskModal(false);
     setDeleteModalMode("edit");
-  }, []);
+  }, [selectedTask, currentBoardId]);
+
+  const confirmDeleteTask = useCallback(() => {
+    if (!selectedTask || !currentBoardId) return;
+
+    setAllBoards((boards) =>
+      boards.map((board) =>
+        board.id !== currentBoardId
+          ? board
+          : {
+              ...board,
+              columns: board.columns?.map((col) =>
+                col.id !== selectedTask.columnId
+                  ? col
+                  : {
+                      ...col,
+                      tasks: col.tasks.filter(
+                        (task) => task.id !== selectedTask.id
+                      ),
+                    }
+              ),
+            }
+      )
+    );
+
+    setSelectedTask(null);
+    setDeleteModalOpen(false);
+  }, [selectedTask, currentBoardId]);
 
   const handleDeleteBoard = useCallback(() => {
     setAllBoards((boards) => {
@@ -378,7 +407,9 @@ export default function ClientLayout({
       <DeleteBoardModal
         opened={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onSubmit={handleDeleteBoard}
+        onSubmit={
+          deleteModalMode === "edit" ? confirmDeleteTask : handleDeleteBoard
+        }
         title={deleteModalMode === "edit" ? "task" : "board"}
         subTitle={
           deleteModalMode === "edit"
