@@ -424,6 +424,7 @@ export default function ClientLayout({
       {currentBoard && (
         <CreateAddEditBoardModal
           title={selectedTask ? "Edit" : "Add New"}
+          task={selectedTask}
           onSubmit={selectedTask ? handleEditTaskSubmit : handleCreateTask}
           onClose={() => setAddEditModalOpen(false)}
           opened={addEditModalOpen}
@@ -504,7 +505,6 @@ export default function ClientLayout({
           }}
           onEdit={openEditTaskModal}
           onDelete={onDeleteTaskModal}
-          onSubmit={() => {}}
         />
       )}
     </div>

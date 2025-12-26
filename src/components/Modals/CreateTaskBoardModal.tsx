@@ -11,7 +11,6 @@ interface CreateTaskBoardModalProps {
   subTitle?: string;
   onClose: () => void;
   opened: boolean;
-  onSubmit: () => void;
   onEdit: () => void;
   onDelete: () => void;
   task: Task;
@@ -24,7 +23,6 @@ const CreateTaskBoardModal = ({
   subTitle,
   onClose,
   opened,
-  onSubmit,
   onEdit,
   onDelete,
   task,

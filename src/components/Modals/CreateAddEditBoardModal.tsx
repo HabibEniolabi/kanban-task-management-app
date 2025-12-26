@@ -12,11 +12,17 @@ interface SubtaskInput {
 interface CreateAddEditBoardModalProps {
   title: string;
   columns: { id: string; name: string }[];
+  task?: {
+    title: string;
+    description?: string;
+    columnId: string;
+    subtasks: { title: string }[];
+  } | null;
   onSubmit: (
     title: string,
     description: string,
     columnId: string,
-    subtasks: SubtaskInput[],
+    subtasks: SubtaskInput[]
   ) => void;
   onClose: () => void;
   opened: boolean;
@@ -25,6 +31,7 @@ interface CreateAddEditBoardModalProps {
 const CreateAddEditBoardModal = ({
   title,
   onSubmit,
+  task,
   onClose,
   opened,
   columns,
@@ -32,12 +39,18 @@ const CreateAddEditBoardModal = ({
   const { colorScheme, setColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
 
-  const [subtasks, setSubtasks] = useState<SubtaskInput[]>([
-    { title: "" },
-    { title: "" },
-  ]);
+  const [subtasks, setSubtasks] = useState<SubtaskInput[]>(
+    task?.subtasks?.length ? task.subtasks : [{ title: "" }, { title: "" }]
+  );
 
   const [columnId, setColumnId] = useState(columns[0]?.id ?? "");
+
+  React.useEffect(() => {
+    if (task) {
+      setSubtasks(task.subtasks);
+      setColumnId(task.columnId);
+    }
+  }, [task]);
 
   const handleDeleteColumn = (index: number) => {
     setSubtasks((prev) => prev.filter((_, i) => i !== index));
@@ -79,7 +92,10 @@ const CreateAddEditBoardModal = ({
         </h2>
         <Formik
           enableReinitialize
-          initialValues={{ title: "", description: "" }}
+          initialValues={{
+            title: task?.title ?? "",
+            description: task?.description ?? "",
+          }}
           onSubmit={(values) => {
             onSubmit(
               values.title.trim(),
@@ -169,6 +185,8 @@ const CreateAddEditBoardModal = ({
                 </span>
                 <div className="relative">
                   <select
+                    value={columnId}
+                    onChange={(e) => setColumnId(e.target.value)}
                     className="
       w-full 
       px-0 py-[8px] pr-[24px]
