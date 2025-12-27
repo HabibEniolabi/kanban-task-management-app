@@ -362,6 +362,7 @@ export default function ClientLayout({
           onAddTask={handleAddTask}
           onEditBoard={openEditBoardModal}
           onDeleteBoard={openDeleteBoardModal}
+          isSidebarVisible={isSidebarVisible}
         />
       </div>
       <div className="flex flex-1">
@@ -382,7 +383,7 @@ export default function ClientLayout({
           </div>
         )}
         <main
-          className={`w-full flex-1 overflow-x-auto dark:bg-[#2B2C37] bg-[#F4F7FD]`}
+          className={`w-full flex-1 overflow-x-auto dark:bg-[#1f202b] bg-[#F4F7FD]`}
         >
           {currentBoard && (
             <BoardPage

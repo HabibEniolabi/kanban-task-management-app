@@ -43,7 +43,7 @@ const Sidebar = ({
   };
 
   return (
-    <div className="w-[300px] border-r border-[#E4EBFA] dark:border-[#979797] h-screen bg-white dark:bg-[#2B2C37]">
+    <div className="md:w-[300px] w-[260px] border-r border-[#E4EBFA] dark:border-[#979797] bg-white dark:bg-[#2B2C37]">
       <div className="p-[33px] flex flex-col justify-between h-full">
         <div>
           <BoardSection
@@ -68,7 +68,7 @@ const Sidebar = ({
         </div>
         <div className="flex flex-col gap-[14px] items-centre">
           <div
-            className="flex items-center justify-between cursor-pointer py-[8px] px-[44px] bg-[#F4F7FD] dark:bg-[#20212C] rounded-[6px]"
+            className="flex items-center justify-between cursor-pointer  py-[14px] px-[44px] bg-[#F4F7FD] dark:bg-[#20212C] rounded-[6px]"
             onClick={toggleTheme}
           >
             <div className="w-[15px] h-[15px]">

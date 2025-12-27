@@ -44,8 +44,8 @@ const BoardPage = ({ board, onOpenTask, onClick }: BoardPageProps) => {
           })}
         </div>
       ))}
-      <div className="bg-[#E4EBFA] dark:bg-[#2B2C37]/50 text-[#635FC7] w-[280px] shrink-0 flex items-center justify-center">
-        <div className="cursor-pointer font-bold text-[24px]" onClick={onClick}> + New Column</div>
+      <div className="bg-[#E4EBFA] dark:bg-[#20212c]  text-[#828FA3] min-w-[280px] min-h-screen rounded-[6px] mt-8 shrink-0 flex items-center justify-center">
+        <div className="cursor-pointer font-bold text-[24px] hover:text-[#635FC7]" onClick={onClick}> + New Column</div>
       </div>
     </div>
   );
