@@ -156,20 +156,30 @@ export default function ClientLayout({
   const handleEditBoardSubmit = useCallback(
     (name: string, columns: string[] = []) => {
       setAllBoards((boards) =>
-        boards.map((b) =>
-          b.id === currentBoardId
-            ? {
-                ...b,
-                name,
-                columns: columns.map((colName, index) => ({
-                  id: `col-${Date.now()}-${index}`,
-                  name: colName,
-                  tasks: [],
-                })),
-              }
-            : b
-        )
-      );
+      boards.map((board) => {
+        if (board.id !== currentBoardId) return board;
+
+        const existingColumns = board.columns ?? [];
+
+        const updatedColumns = columns.map((column, index) => {
+          const existing = existingColumns[index];
+
+          return existing
+            ? { ...existing, name: column } // keep tasks
+            : {
+                id: `col-${Date.now()}-${index}`,
+                name: column,
+                tasks: [],
+              };
+        });
+
+        return {
+          ...board,
+          name,
+          columns: updatedColumns,
+        };
+      })
+    );
       setCreateBoardModalOpen(false);
     },
     [currentBoardId]
@@ -185,38 +195,47 @@ export default function ClientLayout({
       if (!currentBoardId || !selectedTask) return;
 
       setAllBoards((boards) =>
-        boards.map((board) =>
-          board.id !== currentBoardId
-            ? board
-            : {
-                ...board,
-                columns: board.columns?.map((col) => ({
-                  ...col,
-                  tasks:
-                    col.id === columnId
-                      ? [
-                          ...col.tasks.filter((t) => t.id !== selectedTask.id),
-                          {
-                            ...selectedTask,
-                            title,
-                            description,
-                            columnId,
-                            status: columnId,
-                            subtasks: subtasks.map((s, i) => ({
-                              id:
-                                selectedTask.subtasks[i]?.id ??
-                                `subtask-${Date.now()}-${i}`,
-                              title: s.title,
-                              isCompleted:
-                                selectedTask.subtasks[i]?.isCompleted ?? false,
-                            })),
-                          },
-                        ]
-                      : col.tasks.filter((t) => t.id !== selectedTask.id),
-                })),
-              }
-        )
-      );
+      boards.map((board) => {
+        if (board.id !== currentBoardId) return board;
+
+        return {
+          ...board,
+          columns: board.columns?.map((col) => {
+            // remove task from all columns
+            const filteredTasks = col.tasks.filter(
+              (t) => t.id !== selectedTask.id
+            );
+
+            if (col.id !== columnId) {
+              return { ...col, tasks: filteredTasks };
+            }
+
+            // add updated task to target column
+            return {
+              ...col,
+              tasks: [
+                ...filteredTasks,
+                {
+                  ...selectedTask,
+                  title,
+                  description,
+                  columnId,
+                  status: col.name,
+                  subtasks: subtasks.map((s, i) => ({
+                    id:
+                      selectedTask.subtasks[i]?.id ??
+                      `subtask-${Date.now()}-${i}`,
+                    title: s.title,
+                    isCompleted:
+                      selectedTask.subtasks[i]?.isCompleted ?? false,
+                  })),
+                },
+              ],
+            };
+          }),
+        };
+      })
+    );
 
       setSelectedTask(null);
       setAddEditModalOpen(false);
@@ -387,7 +406,6 @@ export default function ClientLayout({
         >
           {currentBoard && (
             <BoardPage
-              key={currentBoard.id}
               board={currentBoard}
               onOpenTask={handleOpenTask}
               onClick={handleAddColumn}
