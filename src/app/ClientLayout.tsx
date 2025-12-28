@@ -387,7 +387,7 @@ export default function ClientLayout({
         >
           {currentBoard && (
             <BoardPage
-            key={currentBoard.id}
+              key={currentBoard.id}
               board={currentBoard}
               onOpenTask={handleOpenTask}
               onClick={handleAddColumn}

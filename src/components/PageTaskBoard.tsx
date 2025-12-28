@@ -21,17 +21,19 @@ const PageTaskBoard = ({ task, onClick }: PageTaskBoardProps) => {
     id: task.id,
   });
 
-  const style = transform ? {
-    transform: `translate(${transform.x}px, ${transform.y}px)`
-  } : undefined;
+  const style = transform
+    ? {
+        transform: `translate(${transform.x}px, ${transform.y}px)`,
+      }
+    : undefined;
   return (
     <div
       ref={setNodeRef}
-      {...listeners}
-      {...attributes}
       className="p-[8px] w-fill bg-[#FFF] dark:bg-[#2b2c37] rounded-[4px] cursor-pointer mb-[12px]"
       onClick={onClick}
       style={style}
+      {...listeners}
+      {...attributes}
     >
       <div className="text-[#000112] dark:text-[#FFF] font-bold hover:text-[#635FC7]">
         {task.title}

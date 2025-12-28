@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  useSensor,
+  useSensors,
+  PointerSensor,
+} from "@dnd-kit/core";
 import { Board } from "./SidebarCommon/BoardSesction";
 import { Task } from "@/src/types/task";
 import BoardColumn from "./BoardColumn";
@@ -13,8 +19,9 @@ interface BoardPageProps {
 }
 
 const BoardPage = ({ board, onOpenTask, onClick }: BoardPageProps) => {
-  const [task, setTask] = useState<Task[]>(()=>
-  board.columns?.flatMap(col => col.tasks) ?? []);
+  const [task, setTask] = useState<Task[]>(
+    () => board.columns?.flatMap((col) => col.tasks) ?? []
+  );
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -29,8 +36,16 @@ const BoardPage = ({ board, onOpenTask, onClick }: BoardPageProps) => {
     );
   }
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 👈 THIS IS THE FIX
+      },
+    })
+  );
+
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
       <div className="flex flex-nowrap gap-[12px] p-[24px] overflow-x-auto w-full no-scrollbar">
         {board.columns?.map((column) => (
           <BoardColumn
