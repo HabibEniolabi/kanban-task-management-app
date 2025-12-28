@@ -1,36 +1,58 @@
+"use client";
 import * as React from "react";
 import { SVGProps } from "react";
 import { motion } from "framer-motion";
 
 export interface ToggleProps extends SVGProps<SVGSVGElement> {
-  primaryColor: string;
-  secondaryColor: string;
-  isDark: boolean;
+  checked: boolean;
+  onToggle: () => void;
 }
 
 const Toggle = ({
-  primaryColor,
-  secondaryColor,
-  isDark,
+  checked,
+  onToggle,
   ...props
-}: ToggleProps) => (
+}: ToggleProps) => {
+  const [showFocus, setShowFocus] = React.useState(false);
+  return(
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 40 20"
-    fill="none"
-    className={primaryColor}
-    {...props}
-  >
-    <rect width={40} height={20} fill={secondaryColor} rx={10} />
-    <motion.g
-      className="transition-transform duration-300 ease-out"
+      viewBox="0 0 40 20"
+      width={40}
+      height={20}
+      role="switch"
+      aria-checked={checked}
+      tabIndex={0}
+      onClick={onToggle}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onToggle();
+        }
+      }}
+      {...props}
+      onFocus={() => setShowFocus(true)}
+      onBlur={() => setShowFocus(false)}
+      onPointerDown={() => setShowFocus(false)} 
       style={{
-        transform: isDark ? "translateX(20px)" : "translateX(0px)",
-        transformOrigin: "center",
+        cursor: "pointer",
+        outline:  "none",
+        outlineOffset: "4px",
+        borderRadius: "999px",
       }}
     >
-      <circle cx={isDark ? 30 : 10} cy={10} r={7} fill={primaryColor} />
-    </motion.g>
-  </svg>
-);
+      {/* Track */}
+      <rect width={40} height={20} rx={10} fill="#635FC7" />
+
+      {/* Knob */}
+      <motion.circle
+        cx={checked ? 30 : 10}
+        cy={10}
+        r={7}
+        fill="#fff"
+        animate={{ cx: checked ? 30 : 10 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      />
+    </svg>
+  )
+};
 export default Toggle;

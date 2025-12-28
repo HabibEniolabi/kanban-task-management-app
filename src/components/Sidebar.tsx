@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import BoardSection, { Board } from "./SidebarCommon/BoardSesction";
 import Hide from "../assets/icon/hide";
 import Sun from "../assets/icon/sun";
@@ -25,6 +25,8 @@ const Sidebar = ({
 }: SidebarProps) => {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
+
+  const [checked, setChecked] = useState(false);
 
   const toggleTheme = () => {
     const newScheme = isDark ? "light" : "dark";
@@ -76,9 +78,8 @@ const Sidebar = ({
             </div>
             <div className="w-[40px] h-[20px]">
               <Toggle
-                primaryColor={isDark ? "#635FC7" : "#fff"}
-                secondaryColor={isDark ? "#fff" : "#635FC7"}
-                isDark={false}
+                checked={checked}
+                onToggle={() => setChecked((v) => !v)}
               />
             </div>
             <div className="w-[15px] h-[15px]">

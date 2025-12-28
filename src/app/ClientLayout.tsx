@@ -53,7 +53,7 @@ export default function ClientLayout({
         const mappedBoards: Board[] = jsonBoards.map((board, index) => ({
           id: String(index + 1),
           name: board.name,
-          icon: <BoardIcon color="#828FA3" />,
+          icon: <BoardIcon color={"#828FA3"} />,
           columns: board.columns.map((column, colIndex) => ({
             id: `col-${index}-${colIndex}`,
             name: column.name,
