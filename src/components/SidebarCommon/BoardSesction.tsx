@@ -1,10 +1,10 @@
 import React from "react";
 import { Task } from "@/src/types/task";
+import BoardIcon from "@/src/assets/icon/board";
 
 export interface Board {
   id: string;
   name: string;
-  icon: React.ReactNode;
   columns?: Array<{
     id: string;
     name: string;
@@ -34,7 +34,9 @@ const BoardSection = ({
           {title}
         </h4>
         {count !== undefined && (
-          <span className="text-xs font-bold text-[#828FA3] whitespace-nowrap">({count})</span>
+          <span className="text-xs font-bold text-[#828FA3] whitespace-nowrap">
+            ({count})
+          </span>
         )}
       </div>
       <div className="flex flex-col">
@@ -68,10 +70,12 @@ const BoardSection = ({
                 "
               >
                 <span className="w-[16px] h-[16px] flex items-center justify-center flex-shrink-0">
-                  {board.icon}
+                  <BoardIcon className={`w-4 h-4 transition-colors`} />
                 </span>
 
-                <span className="font-semibold text-[15px] whitespace-nowrap font-bold overflow-hidden text-ellipsis">{board.name}</span>
+                <span className="font-semibold text-[15px] whitespace-nowrap font-bold overflow-hidden text-ellipsis">
+                  {board.name}
+                </span>
               </div>
             </div>
           );
