@@ -1,13 +1,10 @@
 import Ellipsis from "@/src/assets/icon/ellipsis";
 import { Menu, Modal, useMantineColorScheme } from "@mantine/core";
-import { Task, Subtask, Column } from "@/src/types/task";
-import { div } from "framer-motion/client";
-import { useEffect, useState } from "react";
-
+import { Task, Column } from "@/src/types/task";
 
 interface CreateTaskBoardModalProps {
   title: string;
-  columns: Column[]
+  columns: Column[];
   subTitle?: string;
   onClose: () => void;
   opened: boolean;
@@ -30,8 +27,6 @@ const CreateTaskBoardModal = ({
   onSubtaskToggle,
   onStatusChange,
 }: CreateTaskBoardModalProps) => {
-  const [ selectedStatus, setSelectedStatus ] = useState(task.columnId)
-
   const { colorScheme, setColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -40,11 +35,10 @@ const CreateTaskBoardModal = ({
     (subtask) => subtask.isCompleted
   ).length;
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>)=> {
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newColumnId = e.target.value;
-    setSelectedStatus(newColumnId);
     onStatusChange(newColumnId);
-  }
+  };
 
   return (
     <Modal
@@ -118,7 +112,13 @@ const CreateTaskBoardModal = ({
                     cursor-pointer
                   "
                   />
-                <span className={`text-[13px] font-bold text-[#000112] p-[4px] rounded-[4px] ${subtask.isCompleted ? 'text-[#828FA3] line-through' : 'text-[#000112] dark:text-white'}`}>
+                  <span
+                    className={`text-[13px] font-bold text-[#000112] p-[4px] rounded-[4px] ${
+                      subtask.isCompleted
+                        ? "text-[#828FA3] line-through"
+                        : "text-[#000112] dark:text-white"
+                    }`}
+                  >
                     {subtask.title}
                   </span>
                 </div>
@@ -132,7 +132,7 @@ const CreateTaskBoardModal = ({
           </div>
           <div className="relative">
             <select
-              value={selectedStatus}
+              value={task.columnId}
               onChange={handleStatusChange}
               className="
                 w-full

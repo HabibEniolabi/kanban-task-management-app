@@ -17,7 +17,7 @@ interface BoardColumnProps {
 }
 
 const BoardColumn = ({ column, onOpenTask }: BoardColumnProps) => {
-  const { setNodeRef, isOver } = useDroppable({
+  const { setNodeRef } = useDroppable({
     id: column.id, // IMPORTANT: column.id is the drop target
   });
 

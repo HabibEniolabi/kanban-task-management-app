@@ -29,7 +29,8 @@ export default function ClientLayout({
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [addEditModalOpen, setAddEditModalOpen] = useState<boolean>(false);
 
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  // const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isOpenTaskModal, setISOpenTaskModal] = useState(false);
 
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
@@ -37,6 +38,12 @@ export default function ClientLayout({
     "create"
   );
   const [modalBoardData, setModalBoardData] = useState<Board | null>(null);
+
+  const currentBoard = allBoards.find((b) => b.id === currentBoardId);
+  const selectedTask =
+    currentBoard?.columns
+      ?.flatMap((c) => c.tasks)
+      .find((t) => t.id === selectedTaskId) ?? null;
 
   // Load boards from public/data.json on mount
   useEffect(() => {
@@ -156,30 +163,31 @@ export default function ClientLayout({
   const handleEditBoardSubmit = useCallback(
     (name: string, columns: string[] = []) => {
       setAllBoards((boards) =>
-      boards.map((board) => {
-        if (board.id !== currentBoardId) return board;
+        boards.map((board) => {
+          if (board.id !== currentBoardId) return board;
 
-        const existingColumns = board.columns ?? [];
+          const existingColumns = board.columns ?? [];
 
-        const updatedColumns = columns.map((column, index) => {
-          const existing = existingColumns[index];
+          const updatedColumns = columns.map((colName, index) => {
+            const existing = existingColumns[index];
 
-          return existing
-            ? { ...existing, name: column } // keep tasks
-            : {
-                id: `col-${Date.now()}-${index}`,
-                name: column,
-                tasks: [],
-              };
-        });
+            return existing
+              ? { ...existing, name: colName }
+              : {
+                  id: `col-${Date.now()}-${index}`,
+                  name: colName,
+                  tasks: [],
+                };
+          });
 
-        return {
-          ...board,
-          name,
-          columns: updatedColumns,
-        };
-      })
-    );
+          return {
+            ...board,
+            name,
+            columns: updatedColumns,
+          };
+        })
+      );
+
       setCreateBoardModalOpen(false);
     },
     [currentBoardId]
@@ -189,55 +197,91 @@ export default function ClientLayout({
     (
       title: string,
       description: string,
-      columnId: string,
+      newColumnId: string,
       subtasks: { title: string }[]
     ) => {
       if (!currentBoardId || !selectedTask) return;
 
+      const sourceColumnId = selectedTask.columnId;
+
       setAllBoards((boards) =>
-      boards.map((board) => {
-        if (board.id !== currentBoardId) return board;
+        boards.map((board) => {
+          if (board.id !== currentBoardId) return board;
 
-        return {
-          ...board,
-          columns: board.columns?.map((col) => {
-            // remove task from all columns
-            const filteredTasks = col.tasks.filter(
-              (t) => t.id !== selectedTask.id
-            );
-
-            if (col.id !== columnId) {
-              return { ...col, tasks: filteredTasks };
-            }
-
-            // add updated task to target column
+          // 🔹 SAME COLUMN → update in place
+          if (sourceColumnId === newColumnId) {
             return {
-              ...col,
-              tasks: [
-                ...filteredTasks,
-                {
-                  ...selectedTask,
-                  title,
-                  description,
-                  columnId,
-                  status: col.name,
-                  subtasks: subtasks.map((s, i) => ({
-                    id:
-                      selectedTask.subtasks[i]?.id ??
-                      `subtask-${Date.now()}-${i}`,
-                    title: s.title,
-                    isCompleted:
-                      selectedTask.subtasks[i]?.isCompleted ?? false,
-                  })),
-                },
-              ],
+              ...board,
+              columns: board.columns?.map((col) =>
+                col.id !== sourceColumnId
+                  ? col
+                  : {
+                      ...col,
+                      tasks: col.tasks.map((task) =>
+                        task.id !== selectedTask.id
+                          ? task
+                          : {
+                              ...task,
+                              title,
+                              description,
+                              status: col.name,
+                              subtasks: subtasks.map((s, i) => ({
+                                id:
+                                  task.subtasks[i]?.id ??
+                                  `subtask-${Date.now()}-${i}`,
+                                title: s.title,
+                                isCompleted:
+                                  task.subtasks[i]?.isCompleted ?? false,
+                              })),
+                            }
+                      ),
+                    }
+              ),
             };
-          }),
-        };
-      })
-    );
+          }
 
-      setSelectedTask(null);
+          // 🔹 COLUMN CHANGED → remove + add
+          return {
+            ...board,
+            columns: board.columns?.map((col) => {
+              if (col.id === sourceColumnId) {
+                return {
+                  ...col,
+                  tasks: col.tasks.filter((t) => t.id !== selectedTask.id),
+                };
+              }
+
+              if (col.id === newColumnId) {
+                return {
+                  ...col,
+                  tasks: [
+                    ...col.tasks,
+                    {
+                      ...selectedTask,
+                      title,
+                      description,
+                      columnId: newColumnId,
+                      status: col.name,
+                      subtasks: subtasks.map((s, i) => ({
+                        id:
+                          selectedTask.subtasks[i]?.id ??
+                          `subtask-${Date.now()}-${i}`,
+                        title: s.title,
+                        isCompleted:
+                          selectedTask.subtasks[i]?.isCompleted ?? false,
+                      })),
+                    },
+                  ],
+                };
+              }
+
+              return col;
+            }),
+          };
+        })
+      );
+
+      setSelectedTaskId(null);
       setAddEditModalOpen(false);
     },
     [currentBoardId, selectedTask]
@@ -249,12 +293,12 @@ export default function ClientLayout({
   }, []);
 
   const onDeleteTaskModal = useCallback(() => {
-    if (!selectedTask || !currentBoardId) return;
+    if (!selectedTaskId || !currentBoardId) return;
 
     setDeleteModalOpen(true);
     setISOpenTaskModal(false);
     setDeleteModalMode("edit");
-  }, [selectedTask, currentBoardId]);
+  }, [selectedTaskId, currentBoardId]);
 
   const confirmDeleteTask = useCallback(() => {
     if (!selectedTask || !currentBoardId) return;
@@ -279,7 +323,7 @@ export default function ClientLayout({
       )
     );
 
-    setSelectedTask(null);
+    setSelectedTaskId(null);
     setDeleteModalOpen(false);
   }, [selectedTask, currentBoardId]);
 
@@ -308,11 +352,13 @@ export default function ClientLayout({
     ) => {
       if (!currentBoardId) return;
 
+      const column = currentBoard?.columns?.find((c) => c.id === columnId);
+
       const newTask: Task = {
         id: `task-${Date.now()}`,
         title,
         description,
-        status: columnId,
+        status: column?.name ?? "",
         boardId: currentBoardId,
         columnId,
         subtasks: subtasks.map((sub, index) => ({
@@ -321,6 +367,7 @@ export default function ClientLayout({
           isCompleted: false,
         })),
       };
+
       setAllBoards((boards) =>
         boards.map((board) =>
           board.id !== currentBoardId
@@ -329,10 +376,7 @@ export default function ClientLayout({
                 ...board,
                 columns: board.columns?.map((col) =>
                   col.id === columnId
-                    ? {
-                        ...col,
-                        tasks: [...col.tasks, newTask],
-                      }
+                    ? { ...col, tasks: [...col.tasks, newTask] }
                     : col
                 ),
               }
@@ -341,14 +385,12 @@ export default function ClientLayout({
 
       setAddEditModalOpen(false);
     },
-    [currentBoardId]
+    [currentBoardId, currentBoard]
   );
-
-  const currentBoard = allBoards.find((b) => b.id === currentBoardId);
 
   const handleOpenTask = useCallback((task: Task) => {
     setISOpenTaskModal(true);
-    setSelectedTask(task);
+    setSelectedTaskId(task.id);
   }, []);
 
   const handleAddColumn = useCallback(() => {
@@ -372,6 +414,51 @@ export default function ClientLayout({
       )
     );
   }, [currentBoardId]);
+
+  const moveTask = (taskId: string, newColumnId: string) => {
+    setAllBoards((boards) =>
+      boards.map((board) =>
+        board.id !== currentBoardId
+          ? board
+          : {
+              ...board,
+              columns: board.columns?.map((col) => {
+                // remove from old column
+                if (col.tasks.some((t) => t.id === taskId)) {
+                  return {
+                    ...col,
+                    tasks: col.tasks.filter((t) => t.id !== taskId),
+                  };
+                }
+
+                // add to new column
+                if (col.id === newColumnId) {
+                  const task = boards
+                    .flatMap((b) => b.columns ?? [])
+                    .flatMap((c) => c.tasks)
+                    .find((t) => t.id === taskId);
+
+                  if (!task) return col;
+
+                  return {
+                    ...col,
+                    tasks: [
+                      ...col.tasks,
+                      {
+                        ...task,
+                        columnId: newColumnId,
+                        status: col.name,
+                      },
+                    ],
+                  };
+                }
+
+                return col;
+              }),
+            }
+      )
+    );
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -406,6 +493,7 @@ export default function ClientLayout({
         >
           {currentBoard && (
             <BoardPage
+              onMoveTask={moveTask}
               board={currentBoard}
               onOpenTask={handleOpenTask}
               onClick={handleAddColumn}
@@ -456,12 +544,13 @@ export default function ClientLayout({
           opened={isOpenTaskModal}
           onClose={() => {
             setISOpenTaskModal(false);
-            setSelectedTask(null);
+            setSelectedTaskId(null);
           }}
           title={selectedTask.title}
           subTitle={selectedTask.description}
           task={selectedTask}
           columns={currentBoard.columns ?? []}
+          /* ✅ SUBTASK TOGGLE — single source of truth */
           onSubtaskToggle={(subtaskId) => {
             setAllBoards((boards) =>
               boards.map((board) =>
@@ -469,58 +558,70 @@ export default function ClientLayout({
                   ? board
                   : {
                       ...board,
-                      columns: board.columns?.map((col) => ({
-                        ...col,
-                        tasks: col.tasks.map((task) =>
-                          task.id !== selectedTask.id
-                            ? task
-                            : {
-                                ...task,
-                                subtasks: task.subtasks.map((sub) =>
-                                  sub.id === subtaskId
-                                    ? { ...sub, isCompleted: !sub.isCompleted }
-                                    : sub
-                                ),
-                              }
-                        ),
-                      })),
+                      columns: board.columns?.map((col) =>
+                        col.id !== selectedTask.columnId
+                          ? col
+                          : {
+                              ...col,
+                              tasks: col.tasks.map((task) =>
+                                task.id !== selectedTask.id
+                                  ? task
+                                  : {
+                                      ...task,
+                                      subtasks: task.subtasks.map((sub) =>
+                                        sub.id === subtaskId
+                                          ? {
+                                              ...sub,
+                                              isCompleted: !sub.isCompleted,
+                                            }
+                                          : sub
+                                      ),
+                                    }
+                              ),
+                            }
+                      ),
                     }
               )
-            );
-            setSelectedTask((prev) =>
-              prev
-                ? {
-                    ...prev,
-                    subtasks: prev.subtasks.map((sub) =>
-                      sub.id === subtaskId
-                        ? { ...sub, isCompleted: !sub.isCompleted }
-                        : sub
-                    ),
-                  }
-                : prev
             );
           }}
+          /* ✅ STATUS CHANGE — safe move between columns */
           onStatusChange={(newColumnId) => {
             setAllBoards((boards) =>
-              boards.map((board) =>
-                board.id !== currentBoardId
-                  ? board
-                  : {
-                      ...board,
-                      columns: board.columns?.map((col) => ({
+              boards.map((board) => {
+                if (board.id !== currentBoardId) return board;
+
+                return {
+                  ...board,
+                  columns: board.columns?.map((col) => {
+                    // remove from old column
+                    if (col.id === selectedTask.columnId) {
+                      return {
                         ...col,
-                        tasks:
-                          col.id === newColumnId
-                            ? [
-                                ...col.tasks,
-                                { ...selectedTask, columnId: newColumnId },
-                              ]
-                            : col.tasks.filter(
-                                (task) => task.id !== selectedTask.id
-                              ),
-                      })),
+                        tasks: col.tasks.filter(
+                          (t) => t.id !== selectedTask.id
+                        ),
+                      };
                     }
-              )
+
+                    // add to new column
+                    if (col.id === newColumnId) {
+                      return {
+                        ...col,
+                        tasks: [
+                          ...col.tasks,
+                          {
+                            ...selectedTask,
+                            columnId: newColumnId,
+                            status: col.name,
+                          },
+                        ],
+                      };
+                    }
+
+                    return col;
+                  }),
+                };
+              })
             );
           }}
           onEdit={openEditTaskModal}

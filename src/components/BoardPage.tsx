@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import {
   DndContext,
   DragEndEvent,
-  useSensor,
   useSensors,
+  useSensor,
   PointerSensor,
+  closestCenter,
 } from "@dnd-kit/core";
 import { Board } from "./SidebarCommon/BoardSesction";
 import { Task } from "@/src/types/task";
@@ -16,24 +17,23 @@ interface BoardPageProps {
   board: Board;
   onOpenTask: (task: Task) => void;
   onClick: () => void;
+  onMoveTask: (taskId: string, columnId: string) => void;
 }
 
-const BoardPage = ({ board, onOpenTask, onClick }: BoardPageProps) => {
-  const [task, setTask] = useState<Task[]>(
-    () => board.columns?.flatMap((col) => col.tasks) ?? []
-  );
+const BoardPage = ({
+  board,
+  onOpenTask,
+  onClick,
+  onMoveTask,
+}: BoardPageProps) => {
+  //   );
+  // }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over) return;
 
-    setTask((prev) =>
-      prev.map((t) =>
-        t.id === active.id
-          ? { ...t, columnId: over.id as string, status: over.id as string }
-          : t
-      )
-    );
+    onMoveTask(active.id as string, over.id as string);
   }
 
   const sensors = useSensors(
@@ -45,15 +45,16 @@ const BoardPage = ({ board, onOpenTask, onClick }: BoardPageProps) => {
   );
 
   return (
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
       <div className="flex flex-nowrap gap-[12px] p-[24px] overflow-x-auto w-full no-scrollbar">
         {board.columns?.map((column) => (
           <BoardColumn
             key={column.id}
-            column={{
-              ...column,
-              tasks: task.filter((t) => t.columnId === column.id),
-            }}
+            column={column}
             onOpenTask={onOpenTask}
           />
         ))}
