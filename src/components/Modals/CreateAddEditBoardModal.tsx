@@ -80,6 +80,12 @@ const CreateAddEditBoardModal = ({
           backgroundColor: isDark ? "#2b2c37" : "#fff",
           overflow: "hidden",
         },
+        body: {
+          overflowY: "auto",
+          maxHeight: "90vh",
+          scrollbarWidth: "none", // Firefox
+          msOverflowStyle: "none", // IE / Edge
+        },
       }}
     >
       <div className="flex flex-col gap-[12px] bg-white dark:bg-[#2B2C37] p-[12px] rounded-[6px]">

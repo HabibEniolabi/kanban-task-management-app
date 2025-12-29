@@ -55,9 +55,15 @@ const CreateBoardModal = ({
       overlayProps={{ backgroundOpacity: 0.55, blur: 4 }}
       size={480}
       styles={{
-        content: { 
+        content: {
           backgroundColor: isDark ? "#2b2c37" : "#fff",
-          overflow: "hidden"
+          overflow: "hidden",
+        },
+        body: {
+          overflowY: "auto",
+          maxHeight: "90vh",
+          scrollbarWidth: "none", // Firefox
+          msOverflowStyle: "none", // IE / Edge
         },
       }}
     >
