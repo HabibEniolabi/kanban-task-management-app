@@ -5,6 +5,7 @@ import Ellipsis from "../assets/icon/ellipsis";
 import Image from "next/image";
 import Logo from "../assets/images/logo.png";
 import { Menu, useMantineColorScheme } from "@mantine/core";
+import Plus from "../assets/icon/Plus";
 
 export interface HeaderProps {
   currentBoard?: Board;
@@ -59,12 +60,16 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-[15px]">
           <button
             className="bg-[#635FC7] text-white font-bold rounded-full text-sm
-              p-[12px] hover:bg-[#A8A4FF]
+              px-[14px] py-[10px] hover:bg-[#A8A4FF] cursor-pointer
               disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={onAddTask}
             disabled={!hasColumns}
           >
-            + Add New Task
+            <span className="block sm:hidden">
+              <Plus color="#fff" width={12} height={12} />
+            </span>
+
+            <span className="hidden sm:block">+ Add New Task</span>
           </button>
 
           <Menu shadow="md" width={200} position="bottom-end">
