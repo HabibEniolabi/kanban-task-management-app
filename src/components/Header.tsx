@@ -117,10 +117,10 @@ const Header: React.FC<HeaderProps> = ({
               },
               item: {
                 backgroundColor: "transparent",
-                "&[data-hovered]": {
+                "&[dataHovered]": {
                   backgroundColor: "transparent",
                 },
-                "&[data-active]": {
+                "&[dataActive]": {
                   backgroundColor: "transparent",
                 },
                 "&:hover": {
@@ -129,7 +129,7 @@ const Header: React.FC<HeaderProps> = ({
                 "&:active": {
                   backgroundColor: "transparent",
                 },
-                "&:focus-visible": {
+                "&:focusVisible": {
                   backgroundColor: "transparent",
                 },
               },
