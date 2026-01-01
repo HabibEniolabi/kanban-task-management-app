@@ -205,7 +205,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-[15px]">
           <button
             className="bg-[#635FC7] text-white font-bold rounded-full text-sm
-              px-[14px] py-[10px] hover:bg-[#A8A4FF] cursor-pointer
+              px-[20px] py-[10px] hover:bg-[#A8A4FF] cursor-pointer
               disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={onAddTask}
             disabled={!hasColumns}
