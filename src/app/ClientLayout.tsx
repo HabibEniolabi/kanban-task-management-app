@@ -467,6 +467,10 @@ export default function ClientLayout({
           onEditBoard={openEditBoardModal}
           onDeleteBoard={openDeleteBoardModal}
           isSidebarVisible={isSidebarVisible}
+          boards={allBoards}
+          currentBoardId={currentBoardId}
+          onCreateBoard={openCreateBoardModal}
+          onSelectBoard={handleSelectBoard}
         />
       </div>
       <div className="flex flex-1">

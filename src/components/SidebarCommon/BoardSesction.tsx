@@ -53,7 +53,8 @@ const BoardSection = ({
                 transition-all duration-200
                 rounded-r-full
                 py-[8px]
-                -ml-[33px]
+                md:-ml-[33px]
+                -ml-[16px]
                 ${
                   isActive
                     ? "bg-[#635FC7] text-[#FFFFFF] border-l-4 border-l-[#635FC7] pl-[29px] pr-[24px]"

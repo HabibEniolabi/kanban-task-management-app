@@ -45,7 +45,7 @@ const Sidebar = ({
   };
 
   return (
-    <div className="md:w-[300px] w-[260px] border-r border-[#E4EBFA] dark:border-[#979797] bg-white dark:bg-[#2B2C37]">
+    <div className="md:w-[300px] w-[260px] border-r border-[#E4EBFA] dark:border-[#979797] bg-white dark:bg-[#2B2C37] hidden md:block">
       <div className="p-[33px] flex flex-col justify-between h-full">
         <div>
           <BoardSection
