@@ -2,6 +2,7 @@
   "name": "kanban-task-management-app",
   "version": "0.1.0",
   "private": true,
+   "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,6 +15,7 @@
     "@mantine/hooks": "^8.3.10",
     "@mantine/modals": "^8.3.10",
     "@reduxjs/toolkit": "^2.11.1",
+    "@tabler/icons-react": "^3.36.1",
     "add": "^2.0.6",
     "formik": "^2.4.9",
     "framer-motion": "^12.23.26",
