@@ -114,9 +114,9 @@ const CreateBoardModal = ({
                     />
                     <div
                       onClick={() => handleDeleteColumn(index)}
-                      className="cursor-pointer"
+                      className="cursor-pointer text-[#828FA3] hover:text-[#EA5555]"
                     >
-                      <Cancel color="#828FA3" width={15} height={15} />
+                      <Cancel color="currentColor" width={15} height={15} />
                     </div>
                   </div>
                 ))}

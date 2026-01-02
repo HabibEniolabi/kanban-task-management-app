@@ -90,7 +90,7 @@ const Sidebar = ({
             className="flex items-center cursor-pointer font-bold gap-[6px] text-[#828FA3] px-[26px]"
             onClick={onHideSidebar}
           >
-            <Hide color="#828FA3" width={18} height={16} />{" "}
+            <Hide color="#828FA3" width={18} height={16} />
             <h4>Hide Sidebar</h4>
           </div>
         </div>

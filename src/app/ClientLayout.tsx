@@ -132,6 +132,7 @@ export default function ClientLayout({
   }, []);
 
   const handleAddTask = useCallback(() => {
+    setSelectedTaskId(null);
     setModalMode("create");
     setModalBoardData(null);
     setAddEditModalOpen(true);
@@ -536,7 +537,10 @@ export default function ClientLayout({
           title={selectedTask ? "Edit" : "Add New"}
           task={selectedTask}
           onSubmit={selectedTask ? handleEditTaskSubmit : handleCreateTask}
-          onClose={() => setAddEditModalOpen(false)}
+          onClose={() => {
+            setAddEditModalOpen(false);
+            setSelectedTaskId(null);
+          }}
           opened={addEditModalOpen}
           columns={currentBoard.columns ?? []}
         />
