@@ -414,50 +414,54 @@ export default function ClientLayout({
     );
   }, [currentBoardId]);
 
-  const moveTask = (taskId: string, newColumnId: string) => {
-    setAllBoards((boards) =>
-      boards.map((board) =>
-        board.id !== currentBoardId
-          ? board
-          : {
-              ...board,
-              columns: board.columns?.map((col) => {
-                // remove from old column
-                if (col.tasks.some((t) => t.id === taskId)) {
-                  return {
-                    ...col,
-                    tasks: col.tasks.filter((t) => t.id !== taskId),
-                  };
-                }
+ const moveTask = (taskId: string, newColumnId: string) => {
+  setAllBoards((boards) =>
+    boards.map((board) => {
+      if (board.id !== currentBoardId) return board;
 
-                // add to new column
-                if (col.id === newColumnId) {
-                  const task = boards
-                    .flatMap((b) => b.columns ?? [])
-                    .flatMap((c) => c.tasks)
-                    .find((t) => t.id === taskId);
+      let movedTask: Task | undefined;
 
-                  if (!task) return col;
+      // 1️⃣ Remove task from its current column
+      const cleanedColumns = board.columns?.map((col) => {
+        const taskIndex = col.tasks.findIndex((t) => t.id === taskId);
 
-                  return {
-                    ...col,
-                    tasks: [
-                      ...col.tasks,
-                      {
-                        ...task,
-                        columnId: newColumnId,
-                        status: col.name,
-                      },
-                    ],
-                  };
-                }
+        if (taskIndex !== -1) {
+          movedTask = col.tasks[taskIndex];
 
-                return col;
-              }),
-            }
-      )
-    );
-  };
+          return {
+            ...col,
+            tasks: col.tasks.filter((t) => t.id !== taskId),
+          };
+        }
+
+        return col;
+      });
+
+      // 2️⃣ Add task to TOP of new column
+      const updatedColumns = cleanedColumns?.map((col) => {
+        if (col.id !== newColumnId || !movedTask) return col;
+
+        return {
+          ...col,
+          tasks: [
+            {
+              ...movedTask,
+              columnId: newColumnId,
+              status: col.name,
+            },
+            ...col.tasks,
+          ],
+        };
+      });
+
+      return {
+        ...board,
+        columns: updatedColumns,
+      };
+    })
+  );
+};
+
 
   return (
     <div className="flex flex-col min-h-screen">
